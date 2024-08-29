@@ -38,8 +38,12 @@ namespace jumpE_basic
         }
 
     }
-    public class JFile
+    public class JFile : CustTypeName
     {
+        public string name()
+        {
+            return "JFile";
+        }
         public string file_path;
         private string file_context;
         private Data acsesed_data;
@@ -148,69 +152,73 @@ namespace jumpE_basic
         return false;
     }
 }
-
-public class Function
+    public interface TORF
     {
-        private int start_int;
-        private int end_int;
-        private string function_string;
-        public string file_path;
-        private Data acsesed_data;
-        public Function()
-        {
-            acsesed_data = new Data();
-            start_int = 0;
-            end_int = 1;
-            file_path = "";
-        }
-        public Function(int start_int, int end_int, string path)
-        {
-            acsesed_data = new Data();
-            this.start_int = start_int;
-            this.end_int = end_int;
-            file_path = path;
-        }
-        public Function(int start_int, int end_int, string path, Data acsesed_data) : this(start_int, end_int, path)
-        {
-            this.acsesed_data = acsesed_data;
-        }
-        public void set_start_int(int start_int)
-        {
-            this.start_int = start_int;
-        }
-        public int get_start_int()
-        {
-            return start_int;
-        }
-        public void Setfunction_string(string function_string)
-        {
-            this.function_string = function_string;
-        }
-        public void set_end_int(int end_int)
-        {
-            this.end_int = end_int;
-        }
-        public int get_end_int()
-        {
-            return end_int;
-        }
-        public Data get_acsesed_data()
-        {
-            return acsesed_data;
-        }
-        public void change_acsesed_data(Data acsesed_data)
-        {
-            this.acsesed_data = acsesed_data;
-        }
-        public void uses()
-        {
-            Execute();
-        }
-        public void Execute()
-        {
-            base_runner bases = new base_runner(this.function_string, this.acsesed_data, this.file_path);
-        }
+        public bool booledval();
     }
+
+//public class Function
+//    {
+//        private int start_int;
+//        private int end_int;
+//        private string function_string;
+//        public string file_path;
+//        private Data acsesed_data;
+//        public Function()
+//        {
+//            acsesed_data = new Data();
+//            start_int = 0;
+//            end_int = 1;
+//            file_path = "";
+//        }
+//        public Function(int start_int, int end_int, string path)
+//        {
+//            acsesed_data = new Data();
+//            this.start_int = start_int;
+//            this.end_int = end_int;
+//            file_path = path;
+//        }
+//        public Function(int start_int, int end_int, string path, Data acsesed_data) : this(start_int, end_int, path)
+//        {
+//            this.acsesed_data = acsesed_data;
+//        }
+//        public void set_start_int(int start_int)
+//        {
+//            this.start_int = start_int;
+//        }
+//        public int get_start_int()
+//        {
+//            return start_int;
+//        }
+//        public void Setfunction_string(string function_string)
+//        {
+//            this.function_string = function_string;
+//        }
+//        public void set_end_int(int end_int)
+//        {
+//            this.end_int = end_int;
+//        }
+//        public int get_end_int()
+//        {
+//            return end_int;
+//        }
+//        public Data get_acsesed_data()
+//        {
+//            return acsesed_data;
+//        }
+//        public void change_acsesed_data(Data acsesed_data)
+//        {
+//            this.acsesed_data = acsesed_data;
+//        }
+//        public void uses()
+//        {
+//            Execute();
+//        }
+//        public void Execute()
+//        {
+//            base_runner bases = new base_runner(this.function_string, this.acsesed_data, this.file_path);
+//        }
+//    }
     public interface Valued
     {
         object getV();
@@ -360,8 +368,12 @@ public class Function
             return type;
         }
     }
-    public partial class list : JEnumeral
+    public partial class list : JEnumeral , CustTypeName
     {
+        public string name()
+        {
+            return "list";
+        }
         public string t;
         List<object> stuff;
         public list(string t)
@@ -595,9 +607,9 @@ public class Function
     {
         ISet<string> keys = new HashSet<string>();
         public ISet<string> custtype = new HashSet<string>();
-        Dictionary<string, string> strings = new Dictionary<string, string>();
-        Dictionary<string, double> doubles = new Dictionary<string, double>();
-        Dictionary<string, int> integers = new Dictionary<string, int>();
+        //Dictionary<string, string> strings = new Dictionary<string, string>();
+        //Dictionary<string, double> doubles = new Dictionary<string, double>();
+        //Dictionary<string, int> integers = new Dictionary<string, int>();
         public Dictionary<string, Data> sheets = new Dictionary<string, Data>();
         //Dictionary<string, Line> lines = new Dictionary<string, Line>();
         Dictionary<string, Function> functions = new Dictionary<string, Function>();
@@ -613,19 +625,19 @@ public class Function
         }
 
         //Dictionary<string, Dictionary<string, Object>> custom_types = new Dictionary<string, Dictionary<string, Object>>();
-        public int identifier = 0;
-        public int typeidentifier = 0;
-        public string referenceS(string key)
-        {
-            if (strings.ContainsKey(key))
-            {
-                return strings[key];
-            }
-            else
-            {
-                throw new ArgumentException(key + " not initiallized");
-            }
-        }
+        public double identifier = 0;
+        public double typeidentifier = 0;
+        //public string referenceS(string key)
+        //{
+        //    if (strings.ContainsKey(key))
+        //    {
+        //        return strings[key];
+        //    }
+        //    else
+        //    {
+        //        throw new ArgumentException(key + " not initiallized");
+        //    }
+        //}
         //public void remove(string key)
         //{
         //    //remove from all dictionaries
@@ -691,9 +703,9 @@ public class Function
         public Data Copy()
         {
             Data d = new Data();
-            d.strings = new Dictionary<string, string>(strings);
-            d.doubles = new Dictionary<string, double>(doubles);
-            d.integers = new Dictionary<string, int>(integers);
+            //d.strings = new Dictionary<string, string>(strings);
+            //d.doubles = new Dictionary<string, double>(doubles);
+            //d.integers = new Dictionary<string, int>(integers);
             d.custom_types = new Dictionary<string, Dictionary<string, object>>(custom_types);
             foreach (string key in sheets.Keys)
             {
@@ -707,9 +719,9 @@ public class Function
         public void SaveToFile(string filePath)
         {
             //put a | between each variable
-            string stringsData = DictionaryToString(strings, "string");
-            string doublesData = DictionaryToString(doubles, "double");
-            string integersData = DictionaryToString(integers, "int");
+            //string stringsData = DictionaryToString(strings, "string");
+            //string doublesData = DictionaryToString(doubles, "double");
+            //string integersData = DictionaryToString(integers, "int");
             //string customData = DictionaryToString(custom_types,"custom");
             //string linesData = DictionaryToString(lines, "line");
             string functionsData = DictionaryToString(functions, "function");
@@ -720,26 +732,26 @@ public class Function
                 sheetsData += kvp.Key + "=" + kvp.Value.identifier + Environment.NewLine;
                 kvp.Value.SaveToFile(filePath + "_" + kvp.Key);
             }
-            File.WriteAllText(filePath, stringsData + Environment.NewLine + doublesData + Environment.NewLine + integersData + Environment.NewLine + Environment.NewLine + Environment.NewLine + functionsData + Environment.NewLine + filesData + Environment.NewLine + sheetsData);
+            File.WriteAllText(filePath, Environment.NewLine + Environment.NewLine + Environment.NewLine + functionsData + Environment.NewLine + filesData + Environment.NewLine + sheetsData);
         }
         public void save_specific_var(string key, string path)
         {
             //check type of var and save it to file
             // saves as follows
             // variable name : variable value : variable type
-            if (strings.ContainsKey(key))
-            {
-                File.WriteAllText(path, strings[key]);
-            }
-            else if (doubles.ContainsKey(key))
-            {
-                File.WriteAllText(path, doubles[key] + "");
-            }
-            else if (integers.ContainsKey(key))
-            {
-                File.WriteAllText(path, integers[key] + "");
-            }
-            else if (sheets.ContainsKey(key))
+            //if (strings.ContainsKey(key))
+            //{
+            //    File.WriteAllText(path, strings[key]);
+            //}
+            //else if (doubles.ContainsKey(key))
+            //{
+            //    File.WriteAllText(path, doubles[key] + "");
+            //}
+            //else if (integers.ContainsKey(key))
+            //{
+            //    File.WriteAllText(path, integers[key] + "");
+            //}
+            if (sheets.ContainsKey(key))
             {
                 sheets[key].SaveToFile(path);
             }
@@ -774,9 +786,9 @@ public class Function
         public void ReadFromFile(string filePath)
         {
             string[] liness = File.ReadAllLines(filePath);
-            StringToDictionary(liness[0], strings);
-            StringToDictionary(liness[1], doubles);
-            StringToDictionary(liness[2], integers);
+            //StringToDictionary(liness[0], strings);
+            //StringToDictionary(liness[1], doubles);
+            //StringToDictionary(liness[2], integers);
             //StringToDictionary(liness[3], custom_types);
             //StringToDictionary(liness[4], lines);
             StringToDictionary(liness[5], functions);
@@ -794,46 +806,53 @@ public class Function
         public override string ToString()
         {
             string mama = "";
-            foreach (var kvp in strings)
+            //foreach (var kvp in strings)
+            //{
+            //    mama += kvp.Key + "=" + kvp.Value + ":string|\n";
+            //}
+            //foreach (var kvp in doubles)
+            //{
+            //    mama += kvp.Key + "=" + kvp.Value + ":double|\n";
+            //}
+            //foreach (var kvp in integers)
+            //{
+            //    mama += kvp.Key + "=" + kvp.Value + ":int|\n";
+            //}
+            foreach(string ss in custtype)
             {
-                mama += kvp.Key + "=" + kvp.Value + ":string|\n";
-            }
-            foreach (var kvp in doubles)
-            {
-                mama += kvp.Key + "=" + kvp.Value + ":double|\n";
-            }
-            foreach (var kvp in integers)
-            {
-                mama += kvp.Key + "=" + kvp.Value + ":int|\n";
+                foreach (var kvp in custom_types[ss])
+                {
+                    mama += kvp.Key + "=" + kvp.Value + ":" + ss + "|\n";
+                }
             }
             //foreach (var kvp in lines)
             //{
             //    mama += kvp.Key + "=" + kvp.Value.get_line_number() + ":line|\n";
             //}
-            foreach (var kvp in functions)
-            {
-                mama += kvp.Key + "=" + kvp.Value.get_start_int() + ":" + kvp.Value.get_end_int() + ":function|\n";
-            }
-            foreach (var kvp in files)
-            {
-                mama += kvp.Key + "=" + kvp.Value.get_file_path() + ":file|\n";
-            }
-            foreach (var kvp in sheets)
-            {
-                mama += kvp.Key + "=" + kvp.Value.identifier + ":sheet|\n";
-            }
-            foreach (var kvp in methods)
-            {
-                mama += kvp.Key + "=" + kvp.ToString() + ":method|\n";
-            }
-            foreach (var kvp in UNIQs)
-            {
-                mama += kvp.Key + "=" + kvp.Value + ":UNIQ|\n";
-            }
-            foreach (var kvp in lists)
-            {
-                mama += kvp.Key + "=" + kvp.Value + ":list|\n";
-            }
+            //foreach (var kvp in functions)
+            //{
+            //    mama += kvp.Key + "=" + kvp.Value.get_start_int() + ":" + kvp.Value.get_end_int() + ":function|\n";
+            //}
+            //foreach (var kvp in files)
+            //{
+            //    mama += kvp.Key + "=" + kvp.Value.get_file_path() + ":file|\n";
+            //}
+            //foreach (var kvp in sheets)
+            //{
+            //    mama += kvp.Key + "=" + kvp.Value.identifier + ":sheet|\n";
+            //}
+            //foreach (var kvp in methods)
+            //{
+            //    mama += kvp.Key + "=" + kvp.ToString() + ":method|\n";
+            //}
+            //foreach (var kvp in UNIQs)
+            //{
+            //    mama += kvp.Key + "=" + kvp.Value + ":UNIQ|\n";
+            //}
+            //foreach (var kvp in lists)
+            //{
+            //    mama += kvp.Key + "=" + kvp.Value + ":list|\n";
+            //}
             return mama;
 
 
@@ -849,17 +868,17 @@ public class Function
             return string.Join(Environment.NewLine, keyValuePairs);
         }
 
-        public double referenceD(string key)
-        {
-            if (doubles.ContainsKey(key))
-            {
-                return doubles[key];
-            }
-            else
-            {
-                throw new ArgumentException(key + " not initiallized");
-            }
-        }
+        //public double referenceD(string key)
+        //{
+        //    if (doubles.ContainsKey(key))
+        //    {
+        //        return doubles[key];
+        //    }
+        //    else
+        //    {
+        //        throw new ArgumentException(key + " not initiallized");
+        //    }
+        //}
         public object referenceCustom(string key, string key2)
         {
             if (custom_types.ContainsKey(key))
@@ -924,10 +943,9 @@ public class Function
         }
         public bool isnumvar(string key)
         {
-            if (doubles.ContainsKey(key) || integers.ContainsKey(key))
-            {
-                return true;
-            }
+            if (custtypeofkey(key) != "Null")
+                if(custom_types[custtypeofkey(key)][key] is Number)
+                    return true;
             return false;
         }
         public bool isvar(string key)
@@ -939,30 +957,30 @@ public class Function
             //}
             //return false;
         }
-        public bool inint(string key)
-        {
-            if (integers.ContainsKey(key))
-            {
-                return true;
-            }
-            return false;
-        }
-        public bool instring(string key)
-        {
-            if (strings.ContainsKey(key))
-            {
-                return true;
-            }
-            return false;
-        }
-        public bool indouble(string key)
-        {
-            if (doubles.ContainsKey(key))
-            {
-                return true;
-            }
-            return false;
-        }
+        //public bool inint(string key)
+        //{
+        //    if (integers.ContainsKey(key))
+        //    {
+        //        return true;
+        //    }
+        //    return false;
+        //}
+        //public bool instring(string key)
+        //{
+        //    if (strings.ContainsKey(key))
+        //    {
+        //        return true;
+        //    }
+        //    return false;
+        //}
+        //public bool indouble(string key)
+        //{
+        //    if (doubles.ContainsKey(key))
+        //    {
+        //        return true;
+        //    }
+        //    return false;
+        //}
         public bool isMethod(string key)
         {
             if (methods.ContainsKey(key))
@@ -971,17 +989,17 @@ public class Function
             }
             return false;
         }
-        public int referenceI(string key)
-        {
-            if (integers.ContainsKey(key))
-            {
-                return integers[key];
-            }
-            else
-            {
-                throw new ArgumentException(key + " not initiallized");
-            }
-        }
+        //public int referenceI(string key)
+        //{
+        //    if (integers.ContainsKey(key))
+        //    {
+        //        return integers[key];
+        //    }
+        //    else
+        //    {
+        //        throw new ArgumentException(key + " not initiallized");
+        //    }
+        //}
         public bool issheet(string key)
         {
             if (sheets.ContainsKey(key))
@@ -1017,19 +1035,19 @@ public class Function
         }
         public object referenceVar(string key)
         {
-            if (doubles.ContainsKey(key))
-            {
-                return doubles[key];
-            }
-            else if (strings.ContainsKey(key))
-            {
-                return strings[key];
-            }
-            else if (integers.ContainsKey(key))
-            {
-                return integers[key];
-            }
-            else if (sheets.ContainsKey(key))
+            //if (doubles.ContainsKey(key))
+            //{
+            //    return doubles[key];
+            //}
+            //else if (strings.ContainsKey(key))
+            //{
+            //    return strings[key];
+            //}
+            //else if (integers.ContainsKey(key))
+            //{
+            //    return integers[key];
+            //}
+            if (sheets.ContainsKey(key))
             {
                 return sheets[key];
             }
@@ -1067,29 +1085,29 @@ public class Function
             }
 
         }
-        public void setS(string key, string data)
-        {
-            //if (doubles.ContainsKey(key) || integers.ContainsKey(key) || sheets.ContainsKey(key) || custom_types.ContainsKey(key) || lines.ContainsKey(key) || functions.ContainsKey(key) || files.ContainsKey(key))
-            //{
-            //    Console.WriteLine("variable set to other type");
-            //}
-            //else
-            {
-                if (Double.TryParse(key, out _))
-                {
-                    Console.WriteLine("variable name contains only numbers");
-                }
-                else
-                {
-                    if (keys.Contains(key))
-                    {
-                        SuperRemove(key);
-                    }
-                    strings.Add(key, data);
-                    keys.Add(key);
-                }
-            }
-        }
+        //public void setS(string key, string data)
+        //{
+        //    //if (doubles.ContainsKey(key) || integers.ContainsKey(key) || sheets.ContainsKey(key) || custom_types.ContainsKey(key) || lines.ContainsKey(key) || functions.ContainsKey(key) || files.ContainsKey(key))
+        //    //{
+        //    //    Console.WriteLine("variable set to other type");
+        //    //}
+        //    //else
+        //    {
+        //        if (Double.TryParse(key, out _))
+        //        {
+        //            Console.WriteLine("variable name contains only numbers");
+        //        }
+        //        else
+        //        {
+        //            if (keys.Contains(key))
+        //            {
+        //                SuperRemove(key);
+        //            }
+        //            strings.Add(key, data);
+        //            keys.Add(key);
+        //        }
+        //    }
+        //}
         public void setMethod(string key, string[] code, Type t, Dictionary<string, object> args)
         {
             //if ((isMethod(key) && isvar(key)) || !isvar(key))
@@ -1216,30 +1234,30 @@ public class Function
             //}
         }
 
-        public void setD(string key, double data)
-        {
-            //if ((indouble(key) && isvar(key)) || !isvar(key))
-            {
-                if (Double.TryParse(key, out _))
-                {
-                    Console.WriteLine("variable name contains only numbers");
-                }
-                else
-                {
-                    if (keys.Contains(key))
-                    {
-                        SuperRemove(key);
-                    }
-                    doubles.Add(key, data);
-                    keys.Add(key);
-                }
+        //public void setD(string key, double data)
+        //{
+        //    //if ((indouble(key) && isvar(key)) || !isvar(key))
+        //    {
+        //        if (Double.TryParse(key, out _))
+        //        {
+        //            Console.WriteLine("variable name contains only numbers");
+        //        }
+        //        else
+        //        {
+        //            if (keys.Contains(key))
+        //            {
+        //                SuperRemove(key);
+        //            }
+        //            doubles.Add(key, data);
+        //            keys.Add(key);
+        //        }
 
-            }
-            //else
-            //{
-            //    Console.WriteLine("variable set to other type");
-            //}
-        }
+        //    }
+        //    //else
+        //    //{
+        //    //    Console.WriteLine("variable set to other type");
+        //    //}
+        //}
         public void setUNIQ(string key, UNIQ data)
         {
             //if ((isUNIQ(key) && isvar(key)) || !isvar(key))
@@ -1283,6 +1301,7 @@ public class Function
                     if (dict.ContainsKey(key))
                     {
                         type = key;
+                        break;
                     }
                 }
             }
@@ -1306,7 +1325,7 @@ public class Function
                 throw new ArgumentException(t + " not initiallized");
             }
         }
-        public void setCustom(string key, object data)
+        public void setCustom(string typeee, string key, object data)
         {
             //if (keys.Contains(key))
             //{
@@ -1320,13 +1339,13 @@ public class Function
                 }
                 else
                 {
-                    if (custtype.Contains(key))
+                    if (custtype.Contains(typeee))
                     {
                         if (keys.Contains(key))
                         {
                             SuperRemove(key);
                         }
-                        custom_types[key].Add(key, data);
+                        custom_types[typeee].Add(key, data);
                         keys.Add(key);
 
                     }
@@ -1358,48 +1377,48 @@ public class Function
             //    Console.WriteLine("variable set to other type");
             //}
         }
-        public void setI(string key, int data)
-        {
-            //if ((inint(key) && isvar(key)) || !isvar(key))
-            {
-                if (Double.TryParse(key, out _))
-                {
-                    Console.WriteLine("variable name contains only numbers");
-                }
-                else
-                {
-                    if (keys.Contains(key))
-                    {
-                        SuperRemove(key);
-                    }
-                    integers.Add(key, data);
-                    keys.Add(key);
-                }
-            }
-            //else
-            //{
-            //    Console.WriteLine("variable set to other type");
-            //}
-        }
+        //public void setI(string key, int data)
+        //{
+        //    //if ((inint(key) && isvar(key)) || !isvar(key))
+        //    {
+        //        if (Double.TryParse(key, out _))
+        //        {
+        //            Console.WriteLine("variable name contains only numbers");
+        //        }
+        //        else
+        //        {
+        //            if (keys.Contains(key))
+        //            {
+        //                SuperRemove(key);
+        //            }
+        //            integers.Add(key, data);
+        //            keys.Add(key);
+        //        }
+        //    }
+        //    //else
+        //    //{
+        //    //    Console.WriteLine("variable set to other type");
+        //    //}
+        //}
         public void SuperRemove(string key)
         {
-            if (strings.ContainsKey(key))
-            {
-                strings.Remove(key);
-                keys.Remove(key);
-            }
-            else if (integers.ContainsKey(key))
-            {
-                integers.Remove(key);
-                keys.Remove(key);
-                //Console.WriteLine("removed");
-            }
-            else if (doubles.ContainsKey(key))
-            {
-                doubles.Remove(key);
-                keys.Remove(key);
-            }
-            else if (sheets.ContainsKey(key))
+            //if (strings.ContainsKey(key))
+            //{
+            //    strings.Remove(key);
+            //    keys.Remove(key);
+            //}
+            //else if (integers.ContainsKey(key))
+            //{
+            //    integers.Remove(key);
+            //    keys.Remove(key);
+            //    //Console.WriteLine("removed");
+            //}
+            //else if (doubles.ContainsKey(key))
+            //{
+            //    doubles.Remove(key);
+            //    keys.Remove(key);
+            //}
+            if (sheets.ContainsKey(key))
             {
                 sheets.Remove(key);
                 keys.Remove(key);
@@ -1445,26 +1464,26 @@ public class Function
         public void SuperSet(string key, object data)
         {
             SuperRemove(key);
-            if (data is string)
-            {
-                setS(key, (string)data);
-            }
-            else if (data is double)
-            {
-                setD(key, (double)data);
-            }
-            else if (data is int)
-            {
-                setI(key, (int)data);
-            }
-            else if (data is Data)
+            //if (data is string)
+            //{
+            //    setS(key, (string)data);
+            //}
+            //else if (data is double)
+            //{
+            //    setD(key, (double)data);
+            //}
+            //else if (data is int)
+            //{
+            //    setI(key, (int)data);
+            //}
+            if (data is Data)
             {
                 setsheet(key, (Data)data);
             }
-            else if (data is Dictionary<string, object>)
-            {
-                setCustom(key, (Dictionary<string, object>)data);
-            }
+            //else if (data is Dictionary<string, object>)
+            //{
+            //    setCustom(key, (Dictionary<string, object>)data);
+            //}
             //else if (data is Line)
             //{
             //    setLine(key, (Line)data);
@@ -1485,6 +1504,7 @@ public class Function
             {
                 setUNIQ(key, ((UNIQ)data));
             }
+
 
         }
         public Type getType(string key)
@@ -1525,7 +1545,7 @@ public class Function
             //data.setI("LNT", 0);
             while (run)
             {
-                data.setI("LN", 0);
+                //data.setI("LN", 0);
                 string hell = Console.ReadLine();
                 if (hell == "end")
                 {
@@ -1603,35 +1623,35 @@ public class Function
                     string varval = Console.ReadLine();
                     data.setS(varname, varval);
                 }*/
-                else if (hell == "refD")
-                {
+                //else if (hell == "refD")
+                //{
 
-                    Console.WriteLine("name of variable");
-                    string varname = Console.ReadLine();
-                    if (data.indouble(varname))
-                    {
-                        floatingvar = data.referenceD(varname);
-                        Console.WriteLine(floatingvar);
-                    }
-                    else
-                    {
-                        Console.WriteLine("not a double");
-                    }
+                //    Console.WriteLine("name of variable");
+                //    string varname = Console.ReadLine();
+                //    if (data.indouble(varname))
+                //    {
+                //        floatingvar = data.referenceD(varname);
+                //        Console.WriteLine(floatingvar);
+                //    }
+                //    else
+                //    {
+                //        Console.WriteLine("not a double");
+                //    }
 
-                }
-                else if (hell == "refS")
-                {
-                    Console.WriteLine("name of variable");
-                    string varname = Console.ReadLine();
-                    if (data.instring(varname))
-                    {
-                        Console.WriteLine(data.referenceS(varname));
-                    }
-                    else
-                    {
-                        Console.WriteLine("not a string");
-                    }
-                }
+                //}
+                //else if (hell == "refS")
+                //{
+                //    Console.WriteLine("name of variable");
+                //    string varname = Console.ReadLine();
+                //    if (data.instring(varname))
+                //    {
+                //        Console.WriteLine(data.referenceS(varname));
+                //    }
+                //    else
+                //    {
+                //        Console.WriteLine("not a string");
+                //    }
+                //}
                 else if (hell == "ref")
                 {
                     Console.WriteLine("name of variable");
@@ -1733,7 +1753,7 @@ public class Function
             this.position = 0;
             this.run = true;
             datas.Add(data);
-            data.setI("LNT", 0);
+            //data.setI("LNT", 0);
             while (this.run)
             {
                 if (debg)
@@ -1753,8 +1773,8 @@ public class Function
                     this.code = SimpleTokenizer.Tokenizer(this.lines[this.position]);//get all commands in the line.
                 }
                 //catch { Console.WriteLine("Error: 2, Line not recognized"); }
-                data.setI("LNC", this.position);// set line number for use as a variable in the code
-                data.setI("LNT", data.referenceI("LNT") + 1);//total amount of lines that have been run per session of the data converter
+                //data.setI("LNC", this.position);// set line number for use as a variable in the code
+                //data.setI("LNT", data.referenceI("LNT") + 1);//total amount of lines that have been run per session of the data converter
                 if (commandRegistry.ContainsCommand(this.code[0]))
                 {
                     // distinguish between inner and outer commands, inner commands are commands that are built into the Basic interpreter (inner commands can allso be imported using useC),outer commands are commands that are imported using use.
@@ -1898,6 +1918,7 @@ public class Function
         {
             public Dictionary<string, command_centralls> commands = new Dictionary<string, command_centralls>();
             public Dictionary<string, Func<List<string>, Data, base_runner, bool>> seters = new Dictionary<string, Func<List<string>, Data, base_runner, bool>>();
+            public Dictionary<string, Func<List<string>, Data, base_runner, bool>> listsaaa = new Dictionary<string, Func<List<string>, Data, base_runner, bool>>();
             public CommandRegistry()
             {
                 print print = new print();//prints to console, can use variables and strings by putting them in quotes(must be seperated by spaces)
@@ -1917,38 +1938,38 @@ public class Function
                 pop pop = new pop();
                 callLayer callLy = new callLayer();
                 jump jump = new jump();//jumps to a line number or calls a function use "JP >> {function name}" to call a function
-                inputD inputD = new inputD();//takes a double input and stores it in a variable, variable must allready be initalized 
+                //inputD inputD = new inputD();//takes a double input and stores it in a variable, variable must allready be initalized 
                 comment comment = new comment();// used to comment out lines of code, can be used with // or #
-                inputS inputS = new inputS();//takes a string input and stores it in a variable, variable must allready be initalized
-                inputI inputI = new inputI();//takes a int input and stores it in a variable, variable must allready be initalized
+                //inputS inputS = new inputS();//takes a string input and stores it in a variable, variable must allready be initalized
+                //inputI inputI = new inputI();//takes a int input and stores it in a variable, variable must allready be initalized
                 useC useC = new useC(this);//this is the full on stuff, this is used to just import code from a .cs file, can create both inner and outer commands, 
-                line_number line_number = new line_number();// returns the current line number to pre initalize variables. this is an alternatite to LNC
+                //line_number line_number = new line_number();// returns the current line number to pre initalize variables. this is an alternatite to LNC
                 pre_defined_variable Math_equation = new pre_defined_variable();// this is not relivent to most, used for variables that have allready been initalzed, can be used to do math with variables
-                double_func double_func = new double_func(Math_equation, this);//this initalizes a variable as a double, can be used to do math with variables
-                string_func string_Func = new string_func(Math_equation, this);//this initalizes a variable as a string, can not be used to do math with variables
-                int_func int_func = new int_func(Math_equation, this);// this initalizes a variable as a int, can be used to do math with variables
+                //double_func double_func = new double_func(Math_equation, this);//this initalizes a variable as a double, can be used to do math with variables
+                //string_func string_Func = new string_func(Math_equation, this);//this initalizes a variable as a string, can not be used to do math with variables
+                //int_func int_func = new int_func(Math_equation, this);// this initalizes a variable as a int, can be used to do math with variables
                 when when = new when(Math_equation, this);//logic gate, can be used to create if statements, can be used to create while loops, can be used to create for loops, uses {}
                 return_func return_Func = new return_func();// returns to the last jump point, can be used to return from a function
                 commands.Add("return", return_Func); commands.Add("Return", return_Func); commands.Add("RETURN", return_Func); commands.Add("<<", return_Func);
                 commands.Add("when", when); commands.Add("When", when); commands.Add("if", when);
                 commands.Add("useC", useC); commands.Add("usec", useC);
                 commands.Add("print", print); commands.Add("Print", print);
-                commands.Add("inputI", inputI); commands.Add("inputi", inputI); commands.Add("InputI", inputI);
+                //commands.Add("inputI", inputI); commands.Add("inputi", inputI); commands.Add("InputI", inputI);
                 //commands.Add("whenD", whend); commands.Add("WhenD", whend);
-                commands.Add("inputS", inputS); commands.Add("inputs", inputS); commands.Add("InputS", inputS);
+                //commands.Add("inputS", inputS); commands.Add("inputs", inputS); commands.Add("InputS", inputS);
                 //commands.Add("setS", setS); commands.Add("SetS", setS);
-                commands.Add("string", string_Func); commands.Add("String", string_Func); commands.Add("STRING", string_Func);
-                commands.Add("int", int_func); commands.Add("INT", int_func);
+                //commands.Add("string", string_Func); commands.Add("String", string_Func); commands.Add("STRING", string_Func);
+               // commands.Add("int", int_func); commands.Add("INT", int_func);
                 //commands.Add("whenS", whens); commands.Add("WhenS", whens);
                 commands.Add("jump", jump); commands.Add("jp", jump); commands.Add("JP", jump); commands.Add("JUMP", jump);
-                commands.Add("double", double_func); commands.Add("DOUBLE", double_func); commands.Add("Double", double_func);
+                //commands.Add("double", double_func); commands.Add("DOUBLE", double_func); commands.Add("Double", double_func);
                 /*commands.Add("subtract", subtract); commands.Add("sub", subtract);
                 commands.Add("multiply", multiply); commands.Add("mult", multiply);
                 commands.Add("divide", divide); commands.Add("div", divide);*/
                 commands.Add("end", end); commands.Add("stop", end); commands.Add("END", end);
-                commands.Add("inputD", inputD); commands.Add("inputd", inputD); commands.Add("InputD", inputD);
+                //commands.Add("inputD", inputD); commands.Add("inputd", inputD); commands.Add("InputD", inputD);
                 commands.Add("use", use);
-                commands.Add("line_number", line_number); commands.Add("ln", line_number); commands.Add("LN", line_number);
+                //commands.Add("line_number", line_number); commands.Add("ln", line_number); commands.Add("LN", line_number);
                 commands.Add("comment", comment); commands.Add("//", comment); commands.Add("#", comment);
                 commands.Add("raise", raise); commands.Add("push", push); commands.Add("pop", pop);
                 commands.Add("IDD", new IDD()); commands.Add("IDT", new IDT());
@@ -1959,13 +1980,13 @@ public class Function
                 commands.Add("bringA", new bringA()); commands.Add("pushA", new pushA());
                 commands.Add("pushDL", new pushDL());
                 //commands.Add("Line", new Line_func(Math_equation, this));
-                commands.Add("file", new File_func());
-                commands.Add("Function", new Function_func(Math_equation, this));
+                //commands.Add("file", new File_func());
+                //commands.Add("Function", new Function_func(Math_equation, this));
                 commands.Add("bringDL", new bringDL());
                 commands.Add("HS", new Hard_stop());
                 commands.Add("save", new save());
                 commands.Add("method", new Method_instantiate());
-                commands.Add("list", new listFunc());
+                //commands.Add("list", new listFunc());
                 commands.Add("<><", new set_Return());
                 // list all commands here :
                 // return, Return , RETURN, <<, when, When, if, useC, usec, print, Print, inputI, inputi, InputI, inputS, inputs, InputS, string, String, STRING, int, INT, whenS, WhenS, jump, jp, JP, JUMP, double, DOUBLE, Double, end, stop, END, inputD, inputd, InputD, use, line_number, ln, LN, comment, //, #, raise, push, pop, IDD, IDT, free, skip, sideLayer, remL, callLayer, bring, raiseS, raiseSA, bringA, pushA, pushDL, Line, File, Function, bringDL, HS, 
@@ -2076,25 +2097,29 @@ public class Function
         {
             public override void Execute(List<string> code, Data D, base_runner Base)
             {
-                if (D.inint(code[1]))
-                {
-                    Base.datas[0].setI(code[1], D.referenceI(code[1])); //Base.commandRegistry.add_command(code[1], f); 
-                }
-                else if (D.indouble(code[1]))
-                {
-                    Base.datas[0].setD(code[1], D.referenceD(code[1])); //Base.commandRegistry.add_command(code[1], f); 
-                }
-                else if (D.instring(code[1]))
-                {
-                    Base.datas[0].setS(code[1], D.referenceS(code[1])); //Base.commandRegistry.add_command(code[1], f);                                                                                                          
-                }
-                else if (D.issheet(code[1]))
+                //if (D.inint(code[1]))
+                //{
+                //    Base.datas[0].setI(code[1], D.referenceI(code[1])); //Base.commandRegistry.add_command(code[1], f); 
+                //}
+                //else if (D.indouble(code[1]))
+                //{
+                //    Base.datas[0].setD(code[1], D.referenceD(code[1])); //Base.commandRegistry.add_command(code[1], f); 
+                //}
+                //else if (D.instring(code[1]))
+                //{
+                //    Base.datas[0].setS(code[1], D.referenceS(code[1])); //Base.commandRegistry.add_command(code[1], f);                                                                                                          
+                //}
+                if (D.issheet(code[1]))
                 {
                     Base.datas[0].setsheet(code[1], D.referenceSheet(code[1]));
                 }
                 else if (D.issheet(code[1] + "#"))
                 {
                     Base.datas[0].setsheet(code[1], D.referenceSheet(code[1] + "#"));
+                }
+                else if(D.custtypeofkey(code[1])!="Null")
+                {
+                    Base.datas[0].setCustom(D.custtypeofkey(code[1]),code[1], D.refrenceCustom(D.custtypeofkey(code[1]), code[1]));
                 }
             }
         }
@@ -2284,11 +2309,12 @@ public class Function
             {
                 if (code[1] == "\"")
                 {
-                    D.identifier = D.referenceI(code[2]);
+                    if(((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[2]), code[2]) is Number : false))
+                        D.identifier = ((Number)D.referenceCustom(D.custtypeofkey(code[2]), code[2])).get_value();
                 }
                 else
                 {
-                    D.identifier = int.Parse(code[1]);
+                    D.identifier = double.Parse(code[1]);
                 }
             }
         }
@@ -2298,11 +2324,12 @@ public class Function
             {
                 if (code[1] == "\"")
                 {
-                    D.typeidentifier = D.referenceI(code[2]);
+                    if (((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[2]), code[2]) is Number : false))
+                        D.identifier = ((Number)D.referenceCustom(D.custtypeofkey(code[2]), code[2])).get_value();
                 }
                 else
                 {
-                    D.typeidentifier = int.Parse(code[1]);
+                    D.typeidentifier = double.Parse(code[1]);
                 }
             }
         }
@@ -2378,22 +2405,31 @@ public class Function
                 {
                     if (D.isvar(code[i]))
                     {
-                        if (D.inint(code[i]))
-                        {
-                            datas.setI(code[i], D.referenceI(code[i]));
-                        }
-                        else if (D.indouble(code[i]))
-                        {
-                            datas.setD(code[i], D.referenceD(code[i]));
-                        }
-                        else if (D.instring(code[i]))
-                        {
-                            datas.setS(code[i], D.referenceS(code[i]));
-                        }
-                        else if (D.issheet(code[i]))
+                        //if (D.inint(code[i]))
+                        //{
+                        //    datas.setI(code[i], D.referenceI(code[i]));
+                        //}
+                        //else if (D.indouble(code[i]))
+                        //{
+                        //    datas.setD(code[i], D.referenceD(code[i]));
+                        //}
+                        //else if (D.instring(code[i]))
+                        //{
+                        //    datas.setS(code[i], D.referenceS(code[i]));
+                        //}
+                        if (D.issheet(code[i]))
                         {
                             datas.setsheet(code[i], D.referenceSheet(code[i]));
                         }
+                        else if(D.custtypeofkey(code[i])!="Null")
+                        {
+                            datas.setCustom(D.custtypeofkey(code[i]),code[i], D.refrenceCustom(D.custtypeofkey(code[i]), code[i]));
+                        }
+                        else if(D.islist(code[i]))
+                        {
+                            datas.setlist(code[i], (list)D.referenceVar(code[i]));
+                        }
+
                     }
                 }
                 Base.datas.Add(datas);
@@ -2411,17 +2447,17 @@ public class Function
                     {
                         datas.SuperSet(code[i + 1], D.referenceVar(code[i]));
                     }
-                    if (int.TryParse(code[i], out int ad))
-                    {
-                        if (ad == double.Parse(code[i]))
-                        {
-                            datas.setI(code[i + 1], ad);
-                        }
-                        else
-                        {
-                            datas.setD(code[i + 1], double.Parse(code[i]));
-                        }
-                    }
+                    //if (int.TryParse(code[i], out int ad))
+                    //{
+                    //    if (ad == double.Parse(code[i]))
+                    //    {
+                    //        datas.setI(code[i + 1], ad);
+                    //    }
+                    //    else
+                    //    {
+                    //        datas.setD(code[i + 1], double.Parse(code[i]));
+                    //    }
+                    //}
                 }
                 Base.datas.Add(datas);
             }
@@ -2435,11 +2471,11 @@ public class Function
                 {
                     Data data = new Data();
 
-                    if (code[1] == "\"" && code[3] == "\"")
-                    {
-                        D.setsheet(D.referenceS(code[2]) + "#", data);
-                    }
-                    else
+                    //if (code[1] == "\"" && code[3] == "\"")
+                    //{
+                    //    D.setsheet(D.referenceS(code[2]) + "#", data);
+                    //}
+                    //else
                     {
                         D.setsheet(code[1], data);
                     }
@@ -2453,11 +2489,11 @@ public class Function
         {
             public override void Execute(List<string> code, Data D, base_runner Base)
             {
-                if (code[1] == "\"" && code[3] == "\"")
-                {
-                    D.setsheet(D.referenceS(code[2]) + "#", D);
-                }
-                else
+                //if (code[1] == "\"" && code[3] == "\"")
+                //{
+                //    D.setsheet(D.referenceS(code[2]) + "#", D);
+                //}
+                //else
                 {
                     D.setsheet(code[1], D);
                 }
@@ -2467,11 +2503,11 @@ public class Function
         {
             public override void Execute(List<string> code, Data D, base_runner Base)
             {
-                if (code[1] == "\"" && code[3] == "\"")
-                {
-                    Base.datas.Add(D.referenceSheet(D.referenceS(code[2]) + "#"));
-                }
-                else if (D.issheet(code[1]))
+                //if (code[1] == "\"" && code[3] == "\"")
+                //{
+                //    Base.datas.Add(D.referenceSheet(D.referenceS(code[2]) + "#"));
+                //}
+                if (D.issheet(code[1]))
                 {
                     Base.datas.Add(D.referenceSheet(code[1]));
                 }
@@ -2505,14 +2541,14 @@ public class Function
         {
             public override void Execute(List<string> code, Data D, base_runner Base)
             {
-                if (Base.datas[Base.datas.Count - 2].instring(code[1]))
-                {
-                    if (Base.datas[Base.datas.Count - 2].issheet(Base.datas[Base.datas.Count - 2].referenceS(code[1]) + "#"))
-                    {
-                        D.setsheet(code[2], Base.datas[Base.datas.Count - 2].referenceSheet(Base.datas[Base.datas.Count - 2].referenceS(code[1]) + "#"));
-                        return;
-                    }
-                }
+                //if (Base.datas[Base.datas.Count - 2].instring(code[1]))
+                //{
+                //    if (Base.datas[Base.datas.Count - 2].issheet(Base.datas[Base.datas.Count - 2].referenceS(code[1]) + "#"))
+                //    {
+                //        D.setsheet(code[2], Base.datas[Base.datas.Count - 2].referenceSheet(Base.datas[Base.datas.Count - 2].referenceS(code[1]) + "#"));
+                //        return;
+                //    }
+                //}
                 D.setsheet(code[2], Base.datas[Base.datas.Count - 2]);
             }
         }
@@ -2542,14 +2578,14 @@ public class Function
         {
             public override void Execute(List<string> code, Data D, base_runner Base)
             {
-                if (D.instring(code[1]))
-                {
-                    if (D.issheet(D.referenceS(code[1] + "#")))
-                    {
-                        Base.datas[Base.datas.Count() - 2].setsheet(D.referenceS(code[1] + "#"), D);
-                        return;
-                    }
-                }
+                //if (D.instring(code[1]))
+                //{
+                //    if (D.issheet(D.referenceS(code[1] + "#")))
+                //    {
+                //        Base.datas[Base.datas.Count() - 2].setsheet(D.referenceS(code[1] + "#"), D);
+                //        return;
+                //    }
+                //}
                 Base.datas[Base.datas.Count() - 2].setsheet(code[1], D);
             }
         }
@@ -2587,12 +2623,30 @@ public class Function
                 {
                     //try
                     {
-                        if (statments[iff].Count() < 2)
+                        
+                         if (statments[iff].Count() < 2)
                         {
                             continue;
                         }
                         bool result = false;
                         string equation = "";
+                        if (statments[iff][1] == "bool")
+                        {
+                            if(statments[iff][2] == "true")
+                            {
+                                result = true;
+                            }
+                            else if (statments[iff][2] == "false")
+                            {
+                                result = false;
+                            }
+                            else if ((D.custtypeofkey(statments[iff][2]))!="Null")
+                                if(D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2]) is TORF)
+                                {
+                                    result = ((TORF)D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2])).booledval();
+                                }
+                            
+                        }
                         /*if (code.Count() == 2)
                         {
                             D.setI(code[1], 0);
@@ -2600,9 +2654,9 @@ public class Function
 
                         }*/ // this will be for booleans when i get around to 
                             //else { }
-                        if (statments[iff][1] == "str")
+                        else if (statments[iff][1] == "obj")
                         {
-                            if (D.referenceS(statments[iff][2]).Equals(D.referenceS(statments[iff][3])))
+                            if (D.custtypeofkey(statments[iff][2]) != "Null" && D.custtypeofkey(statments[iff][3]) != "Null"&& D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2]) == D.referenceCustom(D.custtypeofkey(statments[iff][3]), statments[iff][3]))
                                 result = true;
                             if (statments[iff][0] == "or" || statments[iff][0] == "nor")
                             {
@@ -2627,43 +2681,43 @@ public class Function
                         }
                         else if (statments[iff][1] == "typ")
                         {
-                            int a = 0;
-                            int b = -1;
-                            if (D.inint(statments[iff][2]))
+                            double a = 0;
+                            double b = -1;
+                            if (((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[2]), code[2]) is Number : false))
                             {
-                                a = D.referenceI(statments[iff][2]);
+                                a = ((Number)D.referenceCustom(D.custtypeofkey(code[2]), code[2])).get_value();
                             }
-                            else if (D.issheet(statments[iff][2]))
+                            if (D.issheet(statments[iff][2]))
                             {
                                 a = D.referenceSheet(statments[iff][2]).typeidentifier;
                             }
-                            else if (D.instring(statments[iff][2]))
-                            {
-                                if (D.issheet(D.referenceS(statments[iff][2]) + "#"))
-                                {
-                                    a = D.referenceSheet(D.referenceS(statments[iff][2]) + "#").typeidentifier;
-                                }
-                            }
-                            else if (int.TryParse(statments[iff][2], out int ad))
+                            //else if (D.instring(statments[iff][2]))
+                            //{
+                            //    if (D.issheet(D.referenceS(statments[iff][2]) + "#"))
+                            //    {
+                            //        a = D.referenceSheet(D.referenceS(statments[iff][2]) + "#").typeidentifier;
+                            //    }
+                            //}
+                            else if (double.TryParse(statments[iff][2], out double ad))
                             {
                                 a = ad;
                             }
-                            if (D.inint(statments[iff][3]))
+                            if (((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[2]), code[2]) is Number : false))
                             {
-                                b = D.referenceI(statments[iff][3]);
+                                a = ((Number)D.referenceCustom(D.custtypeofkey(code[2]), code[2])).get_value();
                             }
-                            else if (D.issheet(statments[iff][3]))
+                            if (D.issheet(statments[iff][3]))
                             {
                                 b = D.referenceSheet(statments[iff][3]).typeidentifier;
                             }
-                            else if (D.instring(statments[iff][3]))
-                            {
-                                if (D.issheet(D.referenceS(statments[iff][3]) + "#"))
-                                {
-                                    b = D.referenceSheet(D.referenceS(statments[iff][3]) + "#").typeidentifier;
-                                }
-                            }
-                            else if (int.TryParse(statments[iff][3], out int bd))
+                            //else if (D.instring(statments[iff][3]))
+                            //{
+                            //    if (D.issheet(D.referenceS(statments[iff][3]) + "#"))
+                            //    {
+                            //        b = D.referenceSheet(D.referenceS(statments[iff][3]) + "#").typeidentifier;
+                            //    }
+                            //}
+                            else if (double.TryParse(statments[iff][3], out double bd))
                             {
                                 b = bd;
                             }
@@ -2694,43 +2748,43 @@ public class Function
                         }
                         else if (statments[iff][1] == "ver")
                         {
-                            int a = 0;
-                            int b = -1;
-                            if (D.inint(statments[iff][2]))
+                            double a = 0;
+                            double b = -1;
+                            if (((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[2]), code[2]) is Number : false))
                             {
-                                a = D.referenceI(statments[iff][2]);
+                                a = ((Number)D.referenceCustom(D.custtypeofkey(code[2]), code[2])).get_value();
                             }
                             else if (D.issheet(statments[iff][2]))
                             {
                                 a = D.referenceSheet(statments[iff][2]).identifier;
                             }
-                            else if (D.instring(statments[iff][2]))
-                            {
-                                if (D.issheet(D.referenceS(statments[iff][2]) + "#"))
-                                {
-                                    a = D.referenceSheet(D.referenceS(statments[iff][2]) + "#").identifier;
-                                }
-                            }
-                            else if (int.TryParse(statments[iff][2], out int ad))
+                            //else if (D.instring(statments[iff][2]))
+                            //{
+                            //    if (D.issheet(D.referenceS(statments[iff][2]) + "#"))
+                            //    {
+                            //        a = D.referenceSheet(D.referenceS(statments[iff][2]) + "#").identifier;
+                            //    }
+                            //}
+                            else if (double.TryParse(statments[iff][2], out double ad))
                             {
                                 a = ad;
                             }
-                            if (D.inint(statments[iff][3]))
+                            if (((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[2]), code[2]) is Number : false))
                             {
-                                b = D.referenceI(statments[iff][3]);
+                                a = ((Number)D.referenceCustom(D.custtypeofkey(code[2]), code[2])).get_value();
                             }
                             else if (D.issheet(statments[iff][3]))
                             {
                                 b = D.referenceSheet(statments[iff][3]).identifier;
                             }
-                            else if (D.instring(statments[iff][3]))
-                            {
-                                if (D.issheet(D.referenceS(statments[iff][3]) + "#"))
-                                {
-                                    b = D.referenceSheet(D.referenceS(statments[iff][3]) + "#").identifier;
-                                }
-                            }
-                            else if (int.TryParse(statments[iff][3], out int bd))
+                            //else if (D.instring(statments[iff][3]))
+                            //{
+                            //    if (D.issheet(D.referenceS(statments[iff][3]) + "#"))
+                            //    {
+                            //        b = D.referenceSheet(D.referenceS(statments[iff][3]) + "#").identifier;
+                            //    }
+                            //}
+                            else if (double.TryParse(statments[iff][3], out double bd))
                             {
                                 b = bd;
                             }
@@ -3005,11 +3059,12 @@ namespace jumpE_basic
                             object initializedObject = Activator.CreateInstance(compiledType);
 
                             // Check if the result is an instance of outer_commands
-                            if (initializedObject is command_centrall outerCommandsObject)
+                            if (initializedObject is command_centrall)
                             {
                                 // Add the command to the commandRegistry
-                                this.commandRegistry.add_command(className, outerCommandsObject);
-                                Debug.WriteLine(className);
+                                ((command_centrall)initializedObject).Execute(code, D, Base);
+                                //this.commandRegistry.add_command(className, outerCommandsObject);
+                                //Debug.WriteLine(className);
 
                             }
                             else
@@ -3086,64 +3141,64 @@ namespace jumpE_basic
                                 codes.Add(code[i]);
                             }
                         }
-                        if (code[2] == "int")
-                        {
-                            for (int i = 0; i < strings.Count(); i++)
-                            {
-                                l.add((int)(doMath(strings[i].ToArray(), D, Base)));
-                            }
-                        }
-                        else if (code[2] == "double")
-                        {
-                            for (int i = 0; i < strings.Count(); i++)
-                            {
-                                l.add(doMath(strings[i].ToArray(), D, Base));
-                            }
-                        }
-                        else if (code[2] == "string")
-                        {
-                            for (int ik = 0; ik < strings.Count(); ik++)
-                            {
-                                {
-                                    string mesage = "";
-                                    for (int i = 0; i < strings[ik].Count(); i++)
-                                    {
-                                        if (strings[ik][i] == "\"" && strings[ik][i + 2] == "\"")
-                                        {
-                                            mesage += D.referenceVar(code[i + 1]);
-                                            i += 2;
-                                        }
-                                        else if (strings[ik][i] == "!S!")
-                                        {
-                                            mesage += " ";
-                                        }
-                                        else if (strings[ik][i] == "M#" && strings[ik][i + 1] == "#")
-                                        {
+                        //if (code[2] == "int")
+                        //{
+                        //    for (int i = 0; i < strings.Count(); i++)
+                        //    {
+                        //        l.add((int)(doMath(strings[i].ToArray(), D, Base)));
+                        //    }
+                        //}
+                        //else if (code[2] == "double")
+                        //{
+                        //    for (int i = 0; i < strings.Count(); i++)
+                        //    {
+                        //        l.add(doMath(strings[i].ToArray(), D, Base));
+                        //    }
+                        //}
+                        //else if (code[2] == "string")
+                        //{
+                        //    for (int ik = 0; ik < strings.Count(); ik++)
+                        //    {
+                        //        {
+                        //            string mesage = "";
+                        //            for (int i = 0; i < strings[ik].Count(); i++)
+                        //            {
+                        //                if (strings[ik][i] == "\"" && strings[ik][i + 2] == "\"")
+                        //                {
+                        //                    mesage += D.referenceVar(code[i + 1]);
+                        //                    i += 2;
+                        //                }
+                        //                else if (strings[ik][i] == "!S!")
+                        //                {
+                        //                    mesage += " ";
+                        //                }
+                        //                else if (strings[ik][i] == "M#" && strings[ik][i + 1] == "#")
+                        //                {
 
-                                            List<string> codess = new List<string>();
-                                            for (int ll = i; ll < strings[ik].Count; ll++)
-                                            {
-                                                if (strings[ik][ll] == "#" && strings[ik][ll + 1] == "#M")
-                                                {
-                                                    i = ll + 1;
-                                                    break;
-                                                }
-                                                codess.Add(strings[ik][ll]);
-                                            }
-                                            mesage += doMath(codess.ToArray(), D, Base);
-                                        }
-                                        else
-                                        {
-                                            mesage += strings[ik][i];
-                                            i++;
-                                        }
-                                    }
-                                    l.add(mesage);
-                                }
+                        //                    List<string> codess = new List<string>();
+                        //                    for (int ll = i; ll < strings[ik].Count; ll++)
+                        //                    {
+                        //                        if (strings[ik][ll] == "#" && strings[ik][ll + 1] == "#M")
+                        //                        {
+                        //                            i = ll + 1;
+                        //                            break;
+                        //                        }
+                        //                        codess.Add(strings[ik][ll]);
+                        //                    }
+                        //                    mesage += doMath(codess.ToArray(), D, Base);
+                        //                }
+                        //                else
+                        //                {
+                        //                    mesage += strings[ik][i];
+                        //                    i++;
+                        //                }
+                        //            }
+                        //            l.add(mesage);
+                        //        }
 
-                            }
-                        }
-                        else if (code[2] == "sheet")
+                        //    }
+                        //}
+                        if (code[2] == "sheet")
                         {
                             for (int i = 0; i < strings.Count(); i++)
                             {
@@ -3155,6 +3210,13 @@ namespace jumpE_basic
                             for (int i = 0; i < strings.Count(); i++)
                             {
                                 l.add((list)D.referenceVar(strings[i][0]));
+                            }
+                        }
+                        else if (D.custtype.Contains(code[2]))
+                        {
+                            for (int i = 0; i < strings.Count(); i++)
+                            {
+                                l.add(D.referenceCustom(code[2], strings[i][0]));
                             }
                         }
 
@@ -3175,187 +3237,187 @@ namespace jumpE_basic
                 }
             }
         }
-        public class inputD : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
-            {
-                if (D.indouble(code[1]))
-                {
-                    bool inputSuccess = false;
+        //public class inputD : command_centrall
+        //{
+        //    public override void Execute(List<string> code, Data D, base_runner Base)
+        //    {
+        //        if (D.indouble(code[1]))
+        //        {
+        //            bool inputSuccess = false;
 
-                    do
-                    {
-                        try
-                        {
-                            //Console.Write("Enter a double value: ");
-                            string rans = Console.ReadLine();
+        //            do
+        //            {
+        //                try
+        //                {
+        //                    //Console.Write("Enter a double value: ");
+        //                    string rans = Console.ReadLine();
 
-                            if (double.TryParse(rans, out double ran))
-                            {
-                                D.setD(code[1], ran);
-                                inputSuccess = true;
-                            }
-                            else
-                            {
-                                Console.WriteLine("Invalid input. Please enter a valid double.");
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e + " Line: " + Base.get_position());
-                        }
-                    } while (!inputSuccess);
-                }
-            }
-        }
+        //                    if (double.TryParse(rans, out double ran))
+        //                    {
+        //                        D.setD(code[1], ran);
+        //                        inputSuccess = true;
+        //                    }
+        //                    else
+        //                    {
+        //                        Console.WriteLine("Invalid input. Please enter a valid double.");
+        //                    }
+        //                }
+        //                catch (Exception e)
+        //                {
+        //                    Console.WriteLine(e + " Line: " + Base.get_position());
+        //                }
+        //            } while (!inputSuccess);
+        //        }
+        //    }
+        //}
 
-        public class inputI : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
-            {
-                if (D.inint(code[1]))
-                {
-                    bool inputSuccess = false;
+        //public class inputI : command_centrall
+        //{
+        //    public override void Execute(List<string> code, Data D, base_runner Base)
+        //    {
+        //        if (D.inint(code[1]))
+        //        {
+        //            bool inputSuccess = false;
 
-                    do
-                    {
-                        try
-                        {
-                            //Console.Write("Enter an integer value: ");
-                            string rans = Console.ReadLine();
+        //            do
+        //            {
+        //                try
+        //                {
+        //                    //Console.Write("Enter an integer value: ");
+        //                    string rans = Console.ReadLine();
 
-                            if (int.TryParse(rans, out int ran))
-                            {
-                                D.setI(code[1], ran);
-                                inputSuccess = true;
-                            }
-                            else
-                            {
-                                Console.WriteLine("Invalid input. Please enter a valid integer.");
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e + " Line: " + Base.get_position());
-                        }
-                    } while (!inputSuccess);
-                }
-            }
-        }
+        //                    if (int.TryParse(rans, out int ran))
+        //                    {
+        //                        D.setI(code[1], ran);
+        //                        inputSuccess = true;
+        //                    }
+        //                    else
+        //                    {
+        //                        Console.WriteLine("Invalid input. Please enter a valid integer.");
+        //                    }
+        //                }
+        //                catch (Exception e)
+        //                {
+        //                    Console.WriteLine(e + " Line: " + Base.get_position());
+        //                }
+        //            } while (!inputSuccess);
+        //        }
+        //    }
+        //}
 
-        public class inputS : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
-            {
-                if (D.instring(code[1]))
-                {
-                    bool inputSuccess = false;
+        //public class inputS : command_centrall
+        //{
+        //    public override void Execute(List<string> code, Data D, base_runner Base)
+        //    {
+        //        if (D.instring(code[1]))
+        //        {
+        //            bool inputSuccess = false;
 
-                    do
-                    {
-                        try
-                        {
-                            //Console.Write("Enter a string: ");
-                            string rans = Console.ReadLine();
-                            D.setS(code[1], rans);
-                            inputSuccess = true;
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e + " Line: " + Base.get_position());
-                        }
-                    } while (!inputSuccess);
-                }
-            }
-        }
+        //            do
+        //            {
+        //                try
+        //                {
+        //                    //Console.Write("Enter a string: ");
+        //                    string rans = Console.ReadLine();
+        //                    D.setS(code[1], rans);
+        //                    inputSuccess = true;
+        //                }
+        //                catch (Exception e)
+        //                {
+        //                    Console.WriteLine(e + " Line: " + Base.get_position());
+        //                }
+        //            } while (!inputSuccess);
+        //        }
+        //    }
+        //}
 
-        public class setS : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
-            {
-                try
-                {
+        //public class setS : command_centrall
+        //{
+        //    public override void Execute(List<string> code, Data D, base_runner Base)
+        //    {
+        //        try
+        //        {
 
-                    if (code[2] == "=")
-                    {
-                        string mesage = "";
-                        for (int i = 3; i < code.Count(); i++)
-                        {
-                            if (code[i] == "\"" && code[i + 2] == "\"")
-                            {
-                                mesage += D.referenceVar(code[i + 1]);
-                                i += 2;
-                            }
-                            else if (code[i] == "!S!")
-                            {
-                                mesage += " ";
-                            }
-                            else if (code[i] == "M#" && code[i + 1] == "#")
-                            {
+        //            if (code[2] == "=")
+        //            {
+        //                string mesage = "";
+        //                for (int i = 3; i < code.Count(); i++)
+        //                {
+        //                    if (code[i] == "\"" && code[i + 2] == "\"")
+        //                    {
+        //                        mesage += D.referenceVar(code[i + 1]);
+        //                        i += 2;
+        //                    }
+        //                    else if (code[i] == "!S!")
+        //                    {
+        //                        mesage += " ";
+        //                    }
+        //                    else if (code[i] == "M#" && code[i + 1] == "#")
+        //                    {
 
-                                List<string> codes = new List<string>();
-                                for (int ll = i; ll < code.Count; ll++)
-                                {
-                                    if (code[ll] == "#" && code[ll + 1] == "#M")
-                                    {
-                                        i = ll + 1;
-                                        break;
-                                    }
-                                    codes.Add(code[ll]);
-                                }
-                                mesage += doMath(codes.ToArray(), D, Base);
-                            }
-                            else
-                            {
-                                mesage += code[i];
-                                i++;
-                            }
-                        }
-                    }
-                }
-                catch
-                {
-                    Console.WriteLine("Setting error: line " + Base.get_position());
-                }
+        //                        List<string> codes = new List<string>();
+        //                        for (int ll = i; ll < code.Count; ll++)
+        //                        {
+        //                            if (code[ll] == "#" && code[ll + 1] == "#M")
+        //                            {
+        //                                i = ll + 1;
+        //                                break;
+        //                            }
+        //                            codes.Add(code[ll]);
+        //                        }
+        //                        mesage += doMath(codes.ToArray(), D, Base);
+        //                    }
+        //                    else
+        //                    {
+        //                        mesage += code[i];
+        //                        i++;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        catch
+        //        {
+        //            Console.WriteLine("Setting error: line " + Base.get_position());
+        //        }
 
-            }
-        }
-        public class int_func : command_centrall
-        {
-            //pre_defined_variable Math_equation;
-            CommandRegistry commands;
-            IDictionary<string, double> drict = new Dictionary<string, double>();
-            public int_func(pre_defined_variable j, CommandRegistry c)
-            {
-                //this.Math_equation = j;
-                this.commands = c;
+        //    }
+        //}
+        //public class int_func : command_centrall
+        //{
+        //    //pre_defined_variable Math_equation;
+        //    CommandRegistry commands;
+        //    IDictionary<string, double> drict = new Dictionary<string, double>();
+        //    public int_func(pre_defined_variable j, CommandRegistry c)
+        //    {
+        //        //this.Math_equation = j;
+        //        this.commands = c;
 
-            }
-            public override void Execute(List<string> code, Data D, base_runner Base)
-            {
+        //    }
+        //    public override void Execute(List<string> code, Data D, base_runner Base)
+        //    {
 
-                try
-                {
-                    if (code.Count() == 2)
-                    {
-                        D.setI(code[1], 0);
-                        //this.commands.add_command(code[1], this.Math_equation);
+        //        try
+        //        {
+        //            if (code.Count() == 2)
+        //            {
+        //                D.setI(code[1], 0);
+        //                //this.commands.add_command(code[1], this.Math_equation);
 
-                    }
-                    else if (code[2] == "=")
-                    {
-                        string[] c = code.Skip(3).ToArray();
-                        D.setI(code[1], (int)doMath(c, D, Base));
+        //            }
+        //            else if (code[2] == "=")
+        //            {
+        //                string[] c = code.Skip(3).ToArray();
+        //                D.setI(code[1], (int)doMath(c, D, Base));
 
-                    }
+        //            }
 
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Initialization error " + e);
-                }
-            }
-        }
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            Console.WriteLine("Initialization error " + e);
+        //        }
+        //    }
+        //}
         //public class Line_func : command_centrall
         //{
         //    //pre_defined_variable Math_equation;
@@ -3393,85 +3455,85 @@ namespace jumpE_basic
         //    }
         //}
 
-        public class Function_func : command_centrall
-        {
-            //pre_defined_variable Math_equation;
-            CommandRegistry commands;
-            IDictionary<string, double> drict = new Dictionary<string, double>();
-            public Function_func(pre_defined_variable j, CommandRegistry c)
-            {
-                //this.Math_equation = j;
-                this.commands = c;
+        //public class Function_func : command_centrall
+        //{
+        //    //pre_defined_variable Math_equation;
+        //    CommandRegistry commands;
+        //    IDictionary<string, double> drict = new Dictionary<string, double>();
+        //    public Function_func(pre_defined_variable j, CommandRegistry c)
+        //    {
+        //        //this.Math_equation = j;
+        //        this.commands = c;
 
-            }
-            public override void Execute(List<string> code, Data D, base_runner Base)
-            {
+        //    }
+        //    public override void Execute(List<string> code, Data D, base_runner Base)
+        //    {
 
-                try
-                {
-                    string equationa = "";
-                    string equationb = "";
-                    int ended = 0;
-                    if (code.Count() == 2)
-                    {
-                        D.setD(code[1], 0);
-                        //this.commands.add_command(code[1], this.Math_equation);
+        //        try
+        //        {
+        //            string equationa = "";
+        //            string equationb = "";
+        //            int ended = 0;
+        //            if (code.Count() == 2)
+        //            {
+        //                D.setD(code[1], 0);
+        //                //this.commands.add_command(code[1], this.Math_equation);
 
-                    }
-                    else if (code[2] == "=")
-                    {
-                        for (int i = 3; i < code.Count(); i++)
-                        {
-                            if (code[i] == ",")
-                            {
-                                ended = i;
-                                break;
-                            }
-                            double j;
-                            if (Double.TryParse(code[i], out j))
-                            {
-                                equationa += j + " ";
-                            }
-                            else if (code[i] == "+" || code[i] == "-" || code[i] == "/" || code[i] == "*" || code[i] == "sin" || code[i] == "cos" || code[i] == "tan" ||
-                                                           code[i] == "csc" || code[i] == "sec" || code[i] == "%" || code[i] == "cot" || code[i] == "root" || code[i] == ")" || code[i] == "(" || code[i] == " ")
-                            {
-                                equationa += code[i] + " ";
-                            }
-                            else if (D.isnumvar(code[i]))
-                            {
-                                equationa += D.referenceVar(code[i]) + " ";
-                            }
-                        }
-                        for (int i = ended; i < code.Count(); i++)
-                        {
-                            double j;
-                            if (Double.TryParse(code[i], out j))
-                            {
-                                equationb += j + " ";
-                            }
-                            else if (code[i] == "+" || code[i] == "-" || code[i] == "/" || code[i] == "*" || code[i] == "sin" || code[i] == "cos" || code[i] == "tan" ||
-                                                           code[i] == "csc" || code[i] == "sec" || code[i] == "%" || code[i] == "cot" || code[i] == "root" || code[i] == ")" || code[i] == "(" || code[i] == " ")
-                            {
-                                equationb += code[i] + " ";
-                            }
-                            else if (D.isnumvar(code[i]))
-                            {
-                                equationb += D.referenceVar(code[i]) + " ";
-                            }
-                        }
+        //            }
+        //            else if (code[2] == "=")
+        //            {
+        //                for (int i = 3; i < code.Count(); i++)
+        //                {
+        //                    if (code[i] == ",")
+        //                    {
+        //                        ended = i;
+        //                        break;
+        //                    }
+        //                    double j;
+        //                    if (Double.TryParse(code[i], out j))
+        //                    {
+        //                        equationa += j + " ";
+        //                    }
+        //                    else if (code[i] == "+" || code[i] == "-" || code[i] == "/" || code[i] == "*" || code[i] == "sin" || code[i] == "cos" || code[i] == "tan" ||
+        //                                                   code[i] == "csc" || code[i] == "sec" || code[i] == "%" || code[i] == "cot" || code[i] == "root" || code[i] == ")" || code[i] == "(" || code[i] == " ")
+        //                    {
+        //                        equationa += code[i] + " ";
+        //                    }
+        //                    else if (D.isnumvar(code[i]))
+        //                    {
+        //                        equationa += D.referenceVar(code[i]) + " ";
+        //                    }
+        //                }
+        //                for (int i = ended; i < code.Count(); i++)
+        //                {
+        //                    double j;
+        //                    if (Double.TryParse(code[i], out j))
+        //                    {
+        //                        equationb += j + " ";
+        //                    }
+        //                    else if (code[i] == "+" || code[i] == "-" || code[i] == "/" || code[i] == "*" || code[i] == "sin" || code[i] == "cos" || code[i] == "tan" ||
+        //                                                   code[i] == "csc" || code[i] == "sec" || code[i] == "%" || code[i] == "cot" || code[i] == "root" || code[i] == ")" || code[i] == "(" || code[i] == " ")
+        //                    {
+        //                        equationb += code[i] + " ";
+        //                    }
+        //                    else if (D.isnumvar(code[i]))
+        //                    {
+        //                        equationb += D.referenceVar(code[i]) + " ";
+        //                    }
+        //                }
 
-                        CalculationEngine engine = new CalculationEngine();
-                        Function u = new Function((int)(engine.Calculate(equationa, drict)), (int)(engine.Calculate(equationb, drict)), Base.localPath, D);
-                        D.setFunction(code[1], u);
-                    }
+        //                CalculationEngine engine = new CalculationEngine();
+        //                Function u = new Function((int)(engine.Calculate(equationa, drict)), (int)(engine.Calculate(equationb, drict)), Base.localPath, D);
+        //                D.setFunction(code[1], u);
+        //            }
 
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Initialization error " + e);
-                }
-            }
-        }
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            Console.WriteLine("Initialization error " + e);
+        //        }
+        //    }
+        //}
 
         public class File_func : command_centrall
         {
@@ -3489,13 +3551,13 @@ namespace jumpE_basic
                     {
                         D.setFile(code[1], new JFile(code[2], D.referenceSheet(code[3])));
                     }
-                    else if (D.instring(code[3]))
-                    {
-                        if (D.issheet(D.referenceS(code[3] + "#")))
-                        {
-                            D.setFile(code[1], new JFile(code[2], D.referenceSheet(D.referenceS(code[3] + "#"))));
-                        }
-                    }
+                    //else if (D.instring(code[3]))
+                    //{
+                    //    if (D.issheet(D.referenceS(code[3] + "#")))
+                    //    {
+                    //        D.setFile(code[1], new JFile(code[2], D.referenceSheet(D.referenceS(code[3] + "#"))));
+                    //    }
+                    //}
                 }
             }
         }
@@ -3513,207 +3575,207 @@ namespace jumpE_basic
             public override void Execute(List<string> code, Data D, base_runner Base)
             {
 
-                if (D.inint(code[0]))
-                {
-                    try
-                    {
-                        double j = doMath(code.Skip(2).ToArray(), D, Base);
-                        if (code[1] == "=")
-                        {
+                //if (D.inint(code[0]))
+                //{
+                //    try
+                //    {
+                //        double j = doMath(code.Skip(2).ToArray(), D, Base);
+                //        if (code[1] == "=")
+                //        {
 
-                            D.setI(code[0], (int)j);
+                //            D.setI(code[0], (int)j);
 
-                        }
-                        else if (code[1] == "+=")
-                        {
+                //        }
+                //        else if (code[1] == "+=")
+                //        {
 
-                            D.setI(code[0], D.referenceI(code[0]) + (int)j);
+                //            D.setI(code[0], D.referenceI(code[0]) + (int)j);
 
-                        }
-                        else if (code[1] == "-=")
-                        {
+                //        }
+                //        else if (code[1] == "-=")
+                //        {
 
-                            D.setI(code[0], D.referenceI(code[0]) - (int)j);
+                //            D.setI(code[0], D.referenceI(code[0]) - (int)j);
 
-                        }
-                        else if (code[1] == "*=")
-                        {
+                //        }
+                //        else if (code[1] == "*=")
+                //        {
 
-                            D.setI(code[0], D.referenceI(code[0]) * (int)j);
+                //            D.setI(code[0], D.referenceI(code[0]) * (int)j);
 
-                        }
-                        else if (code[1] == "/=")
-                        {
+                //        }
+                //        else if (code[1] == "/=")
+                //        {
 
-                            D.setI(code[0], D.referenceI(code[0]) / (int)j);
+                //            D.setI(code[0], D.referenceI(code[0]) / (int)j);
 
-                        }
-                        else if (code[1] == "++")
-                        {
-                            D.setI(code[0], D.referenceI(code[0]) + 1);
-                        }
-                        else if (code[1] == "--")
-                        {
-                            D.setI(code[0], D.referenceI(code[0]) - 1);
-                        }
-                        else if (code[1] == "**")
-                        {
-                            D.setI(code[0], D.referenceI(code[0]) * D.referenceI(code[0]));
-                        }
-                    }
-                    catch
-                    {
-                        throw new Exception("Initialization error " + Base.position);
-                    }
-                }
-                if (D.indouble(code[0]))
-                {
+                //        }
+                //        else if (code[1] == "++")
+                //        {
+                //            D.setI(code[0], D.referenceI(code[0]) + 1);
+                //        }
+                //        else if (code[1] == "--")
+                //        {
+                //            D.setI(code[0], D.referenceI(code[0]) - 1);
+                //        }
+                //        else if (code[1] == "**")
+                //        {
+                //            D.setI(code[0], D.referenceI(code[0]) * D.referenceI(code[0]));
+                //        }
+                //    }
+                //    catch
+                //    {
+                //        throw new Exception("Initialization error " + Base.position);
+                //    }
+                //}
+                //if (D.indouble(code[0]))
+                //{
 
-                    {
-                        try
-                        {
-                            double j = doMath(code.Skip(2).ToArray(), D, Base);
+                //    {
+                //        try
+                //        {
+                //            double j = doMath(code.Skip(2).ToArray(), D, Base);
 
-                            if (code[1] == "=")
-                            {
+                //            if (code[1] == "=")
+                //            {
 
-                                D.setD(code[0], j);
+                //                D.setD(code[0], j);
 
-                            }
-                            else if (code[1] == "+=")
-                            {
+                //            }
+                //            else if (code[1] == "+=")
+                //            {
 
-                                D.setD(code[0], D.referenceD(code[0]) + j);
+                //                D.setD(code[0], D.referenceD(code[0]) + j);
 
-                            }
-                            else if (code[1] == "-=")
-                            {
+                //            }
+                //            else if (code[1] == "-=")
+                //            {
 
-                                D.setD(code[0], D.referenceD(code[0]) - j);
+                //                D.setD(code[0], D.referenceD(code[0]) - j);
 
-                            }
-                            else if (code[1] == "*=")
-                            {
+                //            }
+                //            else if (code[1] == "*=")
+                //            {
 
-                                D.setD(code[0], D.referenceD(code[0]) * j);
+                //                D.setD(code[0], D.referenceD(code[0]) * j);
 
-                            }
-                            else if (code[1] == "/=")
-                            {
+                //            }
+                //            else if (code[1] == "/=")
+                //            {
 
-                                D.setD(code[0], D.referenceD(code[0]) / j);
+                //                D.setD(code[0], D.referenceD(code[0]) / j);
 
-                            }
-                            else if (code[1] == "++")
-                            {
-                                D.setD(code[0], D.referenceD(code[0]) + 1);
-                            }
-                            else if (code[1] == "--")
-                            {
-                                D.setD(code[0], D.referenceD(code[0]) - 1);
-                            }
-                            else if (code[1] == "**")
-                            {
-                                D.setD(code[0], D.referenceD(code[0]) * D.referenceD(code[0]));
-                            }
-                            else if (code[1] == "/^")
-                            {
-                                D.setD(code[0], Math.Sqrt(D.referenceD(code[0])));
-                            }
-                        }
-                        catch
-                        {
-                            throw new Exception("Initialization error");
-                        }
-                    }
-                }
-                if (D.instring(code[0]))
-                {
-                    string mesage = D.referenceS(code[0]);
-                    if (code[1] == "=")
-                    {
-                        mesage = "";
-                        for (int i = 2; i < code.Count(); i++)
-                        {
-                            if (code[i] == "\"" && code[i + 2] == "\"")
-                            {
-                                mesage += D.referenceVar(code[i + 1]);
-                                i += 2;
-                            }
-                            else if (Mathss.ContainsKey(code[i]))
-                            {
-                                string[] mess = Mathss[code[i]](code.ToArray(), D, Base, i, 0);
-                                mesage += mess[0];
-                                i += int.Parse(mess[1]);
-                            }
-                            else if (code[i] == "\n")
-                            {
-                                mesage += "\n";
-                            }
-                            else if (code[i] == "M#" && code[i + 1] == "#")
-                            {
+                //            }
+                //            else if (code[1] == "++")
+                //            {
+                //                D.setD(code[0], D.referenceD(code[0]) + 1);
+                //            }
+                //            else if (code[1] == "--")
+                //            {
+                //                D.setD(code[0], D.referenceD(code[0]) - 1);
+                //            }
+                //            else if (code[1] == "**")
+                //            {
+                //                D.setD(code[0], D.referenceD(code[0]) * D.referenceD(code[0]));
+                //            }
+                //            else if (code[1] == "/^")
+                //            {
+                //                D.setD(code[0], Math.Sqrt(D.referenceD(code[0])));
+                //            }
+                //        }
+                //        catch
+                //        {
+                //            throw new Exception("Initialization error");
+                //        }
+                //    }
+                //}
+                //if (D.instring(code[0]))
+                //{
+                //    string mesage = D.referenceS(code[0]);
+                //    if (code[1] == "=")
+                //    {
+                //        mesage = "";
+                //        for (int i = 2; i < code.Count(); i++)
+                //        {
+                //            if (code[i] == "\"" && code[i + 2] == "\"")
+                //            {
+                //                mesage += D.referenceVar(code[i + 1]);
+                //                i += 2;
+                //            }
+                //            else if (Mathss.ContainsKey(code[i]))
+                //            {
+                //                string[] mess = Mathss[code[i]](code.ToArray(), D, Base, i, 0);
+                //                mesage += mess[0];
+                //                i += int.Parse(mess[1]);
+                //            }
+                //            else if (code[i] == "\n")
+                //            {
+                //                mesage += "\n";
+                //            }
+                //            else if (code[i] == "M#" && code[i + 1] == "#")
+                //            {
 
-                                List<string> codes = new List<string>();
-                                for (int ll = i; ll < code.Count; ll++)
-                                {
-                                    if (code[ll] == "#" && code[ll + 1] == "#M")
-                                    {
-                                        i = ll + 1;
-                                        break;
-                                    }
-                                    codes.Add(code[ll]);
-                                }
-                                mesage += doMath(codes.ToArray(), D, Base);
-                            }
-                            else
-                            {
-                                mesage += code[i];
-                                // i++;
-                            }
-                        }
-                    }
-                    else if (code[1] == "+=")
-                    {
-                        for (int i = 2; i < code.Count(); i++)
-                        {
-                            if (code[i] == "\"" && code[i + 2] == "\"")
-                            {
-                                mesage += D.referenceVar(code[i + 1]);
-                                i += 2;
-                            }
-                            else if (Mathss.ContainsKey(code[i]))
-                            {
-                                string[] mess = Mathss[code[i]](code.ToArray(), D, Base, i, 0);
-                                mesage += mess[0];
-                                i += int.Parse(mess[1]);
-                            }
-                            else if (code[i] == "\n")
-                            {
-                                mesage += "\n";
-                            }
-                            else if (code[i] == "M#" && code[i + 1] == "#")
-                            {
-                                List<string> codes = new List<string>();
-                                for (int ll = i; ll < code.Count; ll++)
-                                {
-                                    if (code[ll] == "#" && code[ll + 1] == "#M")
-                                    {
-                                        i = ll + 1;
-                                        break;
-                                    }
-                                    codes.Add(code[ll]);
-                                }
-                                mesage += doMath(codes.ToArray(), D, Base);
-                            }
-                            else
-                            {
-                                mesage += code[i];
-                                // i++;
-                            }
-                        }
-                    }
-                    D.setS(code[0], mesage);
-                }
+                //                List<string> codes = new List<string>();
+                //                for (int ll = i; ll < code.Count; ll++)
+                //                {
+                //                    if (code[ll] == "#" && code[ll + 1] == "#M")
+                //                    {
+                //                        i = ll + 1;
+                //                        break;
+                //                    }
+                //                    codes.Add(code[ll]);
+                //                }
+                //                mesage += doMath(codes.ToArray(), D, Base);
+                //            }
+                //            else
+                //            {
+                //                mesage += code[i];
+                //                // i++;
+                //            }
+                //        }
+                //    }
+                //    else if (code[1] == "+=")
+                //    {
+                //        for (int i = 2; i < code.Count(); i++)
+                //        {
+                //            if (code[i] == "\"" && code[i + 2] == "\"")
+                //            {
+                //                mesage += D.referenceVar(code[i + 1]);
+                //                i += 2;
+                //            }
+                //            else if (Mathss.ContainsKey(code[i]))
+                //            {
+                //                string[] mess = Mathss[code[i]](code.ToArray(), D, Base, i, 0);
+                //                mesage += mess[0];
+                //                i += int.Parse(mess[1]);
+                //            }
+                //            else if (code[i] == "\n")
+                //            {
+                //                mesage += "\n";
+                //            }
+                //            else if (code[i] == "M#" && code[i + 1] == "#")
+                //            {
+                //                List<string> codes = new List<string>();
+                //                for (int ll = i; ll < code.Count; ll++)
+                //                {
+                //                    if (code[ll] == "#" && code[ll + 1] == "#M")
+                //                    {
+                //                        i = ll + 1;
+                //                        break;
+                //                    }
+                //                    codes.Add(code[ll]);
+                //                }
+                //                mesage += doMath(codes.ToArray(), D, Base);
+                //            }
+                //            else
+                //            {
+                //                mesage += code[i];
+                //                // i++;
+                //            }
+                //        }
+                //    }
+                //    D.setS(code[0], mesage);
+                //}
                 //if (D.isLine(code[0]))
                 //{
 
@@ -3749,41 +3811,41 @@ namespace jumpE_basic
                 //        }
                 //    }
                 //}
-                if (D.isFunction(code[0]))
-                {
-                    if (code.Count == 1)
-                    {
-                        D.referenceFunction(code[0]).uses();
-                    }
-                    else if (code.Count == 2)
-                    {
-                        if (code[1] == "inst")
-                        {
-                            string mesage = "";
-                            for (int i = D.referenceFunction(code[0]).get_start_int(); i < D.referenceFunction(code[0]).get_end_int(); i++)
-                            {
-                                mesage += Base.lines[i] + "\n";
-                            }
-                            mesage += "end";
-                            D.referenceFunction(code[0]).Setfunction_string(mesage);
-                        }
-                    }
-                    else if (code[1] == "=")
-                    {
-                        if (D.issheet(code[2]))
-                        {
-                            D.referenceFunction(code[0]).change_acsesed_data(D.referenceSheet(code[2]));
-                        }
-                        else if (D.instring(code[2]))
-                        {
-                            if (D.issheet(D.referenceS(code[2]) + "#"))
-                            {
-                                D.referenceFunction(code[0]).change_acsesed_data(D.referenceSheet(D.referenceS(code[2]) + "#"));
-                            }
-                        }
-                    }
+                //if (D.isFunction(code[0]))
+                //{
+                //    if (code.Count == 1)
+                //    {
+                //        D.referenceFunction(code[0]).uses();
+                //    }
+                //    else if (code.Count == 2)
+                //    {
+                //        if (code[1] == "inst")
+                //        {
+                //            string mesage = "";
+                //            for (int i = D.referenceFunction(code[0]).get_start_int(); i < D.referenceFunction(code[0]).get_end_int(); i++)
+                //            {
+                //                mesage += Base.lines[i] + "\n";
+                //            }
+                //            mesage += "end";
+                //            D.referenceFunction(code[0]).Setfunction_string(mesage);
+                //        }
+                //    }
+                //    else if (code[1] == "=")
+                //    {
+                //        if (D.issheet(code[2]))
+                //        {
+                //            D.referenceFunction(code[0]).change_acsesed_data(D.referenceSheet(code[2]));
+                //        }
+                //        else if (D.instring(code[2]))
+                //        {
+                //            if (D.issheet(D.referenceS(code[2]) + "#"))
+                //            {
+                //                D.referenceFunction(code[0]).change_acsesed_data(D.referenceSheet(D.referenceS(code[2]) + "#"));
+                //            }
+                //        }
+                //    }
 
-                }
+                //}
                 if (D.isFile(code[0]))
                 {
                     if (code.Count == 1)
@@ -3816,13 +3878,13 @@ namespace jumpE_basic
                         {
                             D.referenceFile(code[0]).change_acsesed_data(D.referenceSheet(code[2]));
                         }
-                        else if (D.instring(code[2]))
-                        {
-                            if (D.issheet(D.referenceS(code[2]) + "#"))
-                            {
-                                D.referenceFile(code[0]).change_acsesed_data(D.referenceSheet(D.referenceS(code[2]) + "#"));
-                            }
-                        }
+                        //else if (D.instring(code[2]))
+                        //{
+                        //    if (D.issheet(D.referenceS(code[2]) + "#"))
+                        //    {
+                        //        D.referenceFile(code[0]).change_acsesed_data(D.referenceSheet(D.referenceS(code[2]) + "#"));
+                        //    }
+                        //}
                     }
                 }
                 if (D.isMethod(code[0]))
@@ -3851,58 +3913,58 @@ namespace jumpE_basic
                     {
                         switch (((list)D.referenceVar(code[0])).t)
                         {
-                            case ("int"):
-                                int j = (int)doMath(code.Skip(2).ToArray(), D, Base);
-                                ((list)D.referenceVar(code[0])).add(j);
-                                break;
-                            case ("double"):
-                                double sj = doMath(code.Skip(2).ToArray(), D, Base);
-                                ((list)D.referenceVar(code[0])).add(sj);
-                                break;
-                            case ("string"):
-                                string mesage = "";
-                                for (int i = 2; i < code.Count(); i++)
-                                {
-                                    if (code[i] == "\"" && code[i + 2] == "\"")
-                                    {
-                                        mesage += D.referenceVar(code[i + 1]);
-                                        i += 2;
-                                    }
-                                    else if (code[i] == "!S!")
-                                    {
-                                        mesage += " ";
-                                    }
-                                    else if (code[i] == "\n")
-                                    {
-                                        mesage += "\n";
-                                    }
-                                    else if (code[i] == "!L!")
-                                    {
-                                        mesage += ((list)D.referenceVar(code[i + 1])).get((int.TryParse(code[i + 2], out int jl) ? jl : ((D.isnumvar(code[i + 2]) ? ((D.inint(code[i + 2]) ? D.referenceI(code[i + 2]) : ((int)D.referenceD(code[i + 2])))) : throw new ArgumentException("error with lists")))));
-                                        i += 2;
-                                    }
-                                    else if (code[i] == "M#" && code[i + 1] == "#")
-                                    {
-                                        List<string> codes = new List<string>();
-                                        for (int ll = i; ll < code.Count; ll++)
-                                        {
-                                            if (code[ll] == "#" && code[ll + 1] == "#M")
-                                            {
-                                                i = ll + 1;
-                                                break;
-                                            }
-                                            codes.Add(code[ll]);
-                                        }
-                                        mesage += doMath(codes.ToArray(), D, Base);
-                                    }
-                                    else
-                                    {
-                                        mesage += code[i];
-                                        i++;
-                                    }
-                                }
-                                ((list)D.referenceVar(code[0])).add(mesage);
-                                break;
+                            //case ("int"):
+                            //    int j = (int)doMath(code.Skip(2).ToArray(), D, Base);
+                            //    ((list)D.referenceVar(code[0])).add(j);
+                            //    break;
+                            //case ("double"):
+                            //    double sj = doMath(code.Skip(2).ToArray(), D, Base);
+                            //    ((list)D.referenceVar(code[0])).add(sj);
+                            //    break;
+                            //case ("string"):
+                            //    string mesage = "";
+                            //    for (int i = 2; i < code.Count(); i++)
+                            //    {
+                            //        if (code[i] == "\"" && code[i + 2] == "\"")
+                            //        {
+                            //            mesage += D.referenceVar(code[i + 1]);
+                            //            i += 2;
+                            //        }
+                            //        else if (code[i] == "!S!")
+                            //        {
+                            //            mesage += " ";
+                            //        }
+                            //        else if (code[i] == "\n")
+                            //        {
+                            //            mesage += "\n";
+                            //        }
+                            //        else if (code[i] == "!L!")
+                            //        {
+                            //            mesage += ((list)D.referenceVar(code[i + 1])).get((int.TryParse(code[i + 2], out int jl) ? jl : ((D.isnumvar(code[i + 2]) ? ((D.inint(code[i + 2]) ? D.referenceI(code[i + 2]) : ((int)D.referenceD(code[i + 2])))) : throw new ArgumentException("error with lists")))));
+                            //            i += 2;
+                            //        }
+                            //        else if (code[i] == "M#" && code[i + 1] == "#")
+                            //        {
+                            //            List<string> codes = new List<string>();
+                            //            for (int ll = i; ll < code.Count; ll++)
+                            //            {
+                            //                if (code[ll] == "#" && code[ll + 1] == "#M")
+                            //                {
+                            //                    i = ll + 1;
+                            //                    break;
+                            //                }
+                            //                codes.Add(code[ll]);
+                            //            }
+                            //            mesage += doMath(codes.ToArray(), D, Base);
+                            //        }
+                            //        else
+                            //        {
+                            //            mesage += code[i];
+                            //            i++;
+                            //        }
+                            //    }
+                            //    ((list)D.referenceVar(code[0])).add(mesage);
+                            //    break;
                             case ("list"):
                                 if (Mathss.ContainsKey(code[2]))
                                 {
@@ -3910,6 +3972,12 @@ namespace jumpE_basic
                                     ((list)D.referenceVar(code[0])).add(list.stringtolist(eee[0]));
                                 }
                                 ((list)D.referenceVar(code[0])).add((list)D.referenceVar(code[2]));
+                                break;
+                            default:
+                                if (D.custtype.Contains((((list)D.referenceVar(code[0])).t)))
+                                {
+                                    ((list)D.referenceVar(code[0])).add(D.referenceCustom(((list)D.referenceVar(code[0])).t, code[2]));
+                                }
                                 break;
                         }
 
@@ -3923,169 +3991,169 @@ namespace jumpE_basic
                         else if (int.TryParse(code[1], out int valindex)) index = valindex;
                         switch (((list)D.referenceVar(code[0])).t)
                         {
-                            case ("int"):
-                                try
-                                {
-                                    double j = doMath(code.Skip(3).ToArray(), D, Base);
-                                    if (code[2] == "=")
-                                    {
+                            //case ("int"):
+                            //    try
+                            //    {
+                            //        double j = doMath(code.Skip(3).ToArray(), D, Base);
+                            //        if (code[2] == "=")
+                            //        {
 
-                                        ((list)D.referenceVar(code[0])).set(index, (int)j);
+                            //            ((list)D.referenceVar(code[0])).set(index, (int)j);
 
-                                    }
-                                    else if (code[2] == "+=")
-                                    {
-                                        ((list)D.referenceVar(code[0])).set(index, (int)((list)D.referenceVar(code[0])).get(index) + j);
-
-
-                                    }
-                                    else if (code[2] == "-=")
-                                    {
-                                        ((list)D.referenceVar(code[0])).set(index, (int)((list)D.referenceVar(code[0])).get(index) - j);
-
-                                    }
-                                    else if (code[2] == "*=")
-                                    {
-                                        ((list)D.referenceVar(code[0])).set(index, (int)((list)D.referenceVar(code[0])).get(index) * j);
-
-                                    }
-                                    else if (code[2] == "/=")
-                                    {
-                                        ((list)D.referenceVar(code[0])).set(index, (int)((list)D.referenceVar(code[0])).get(index) / j);
-
-                                    }
-                                    else if (code[2] == "++")
-                                    {
-                                        ((list)D.referenceVar(code[0])).set(index, (int)((list)D.referenceVar(code[0])).get(index) + 1);
-                                    }
-                                    else if (code[2] == "--")
-                                    {
-                                        ((list)D.referenceVar(code[0])).set(index, (int)((list)D.referenceVar(code[0])).get(index) - 1);
-                                    }
-                                    else if (code[2] == "**")
-                                    {
-                                        ((list)D.referenceVar(code[0])).set(index, (int)((list)D.referenceVar(code[0])).get(index) * (int)((list)D.referenceVar(code[0])).get(index));
-                                    }
-                                }
-                                catch
-                                {
-                                    throw new Exception("Initialization error " + Base.position);
-                                }
-                                break;
-
-                            case ("double"):
-                                try
-                                {
-                                    double j = doMath(code.Skip(3).ToArray(), D, Base);
-                                    if (code[2] == "=")
-                                    {
-
-                                        ((list)D.referenceVar(code[0])).set(index, j);
-
-                                    }
-                                    else if (code[2] == "+=")
-                                    {
-                                        ((list)D.referenceVar(code[0])).set(index, (double)((list)D.referenceVar(code[0])).get(index) + j);
+                            //        }
+                            //        else if (code[2] == "+=")
+                            //        {
+                            //            ((list)D.referenceVar(code[0])).set(index, (int)((list)D.referenceVar(code[0])).get(index) + j);
 
 
-                                    }
-                                    else if (code[2] == "-=")
-                                    {
-                                        ((list)D.referenceVar(code[0])).set(index, (double)((list)D.referenceVar(code[0])).get(index) - j);
+                            //        }
+                            //        else if (code[2] == "-=")
+                            //        {
+                            //            ((list)D.referenceVar(code[0])).set(index, (int)((list)D.referenceVar(code[0])).get(index) - j);
 
-                                    }
-                                    else if (code[2] == "*=")
-                                    {
-                                        ((list)D.referenceVar(code[0])).set(index, (double)((list)D.referenceVar(code[0])).get(index) * j);
+                            //        }
+                            //        else if (code[2] == "*=")
+                            //        {
+                            //            ((list)D.referenceVar(code[0])).set(index, (int)((list)D.referenceVar(code[0])).get(index) * j);
 
-                                    }
-                                    else if (code[2] == "/=")
-                                    {
-                                        ((list)D.referenceVar(code[0])).set(index, (double)((list)D.referenceVar(code[0])).get(index) / j);
+                            //        }
+                            //        else if (code[2] == "/=")
+                            //        {
+                            //            ((list)D.referenceVar(code[0])).set(index, (int)((list)D.referenceVar(code[0])).get(index) / j);
 
-                                    }
-                                    else if (code[2] == "++")
-                                    {
-                                        ((list)D.referenceVar(code[0])).set(index, (double)((list)D.referenceVar(code[0])).get(index) + 1);
-                                    }
-                                    else if (code[2] == "--")
-                                    {
-                                        ((list)D.referenceVar(code[0])).set(index, (double)((list)D.referenceVar(code[0])).get(index) - 1);
-                                    }
-                                    else if (code[2] == "**")
-                                    {
-                                        ((list)D.referenceVar(code[0])).set(index, (double)((list)D.referenceVar(code[0])).get(index) * (double)((list)D.referenceVar(code[0])).get(index));
-                                    }
-                                }
-                                catch
-                                {
-                                    throw new Exception("Initialization error " + Base.position);
-                                }
-                                break;
-                            case ("string"):
-                                try
-                                {
-                                    string mesage = "";
-                                    for (int i = 3; i < code.Count(); i++)
-                                    {
-                                        if (code[i] == "\"" && code[i + 2] == "\"")
-                                        {
-                                            mesage += D.referenceVar(code[i + 1]);
-                                            i += 2;
-                                        }
-                                        else if (code[i] == "!S!")
-                                        {
-                                            mesage += " ";
-                                        }
-                                        else if (code[i] == "\n")
-                                        {
-                                            mesage += "\n";
-                                        }
-                                        else if (code[i] == "!L!")
-                                        {
-                                            mesage += ((list)D.referenceVar(code[i + 1])).get((int.TryParse(code[i + 2], out int j) ? j : ((D.isnumvar(code[i + 2]) ? ((D.inint(code[i + 2]) ? D.referenceI(code[i + 2]) : ((int)D.referenceD(code[i + 2])))) : throw new ArgumentException("error with lists")))));
-                                            i += 2;
-                                        }
-                                        else if (code[i] == "M#" && code[i + 1] == "#")
-                                        {
+                            //        }
+                            //        else if (code[2] == "++")
+                            //        {
+                            //            ((list)D.referenceVar(code[0])).set(index, (int)((list)D.referenceVar(code[0])).get(index) + 1);
+                            //        }
+                            //        else if (code[2] == "--")
+                            //        {
+                            //            ((list)D.referenceVar(code[0])).set(index, (int)((list)D.referenceVar(code[0])).get(index) - 1);
+                            //        }
+                            //        else if (code[2] == "**")
+                            //        {
+                            //            ((list)D.referenceVar(code[0])).set(index, (int)((list)D.referenceVar(code[0])).get(index) * (int)((list)D.referenceVar(code[0])).get(index));
+                            //        }
+                            //    }
+                            //    catch
+                            //    {
+                            //        throw new Exception("Initialization error " + Base.position);
+                            //    }
+                            //    break;
 
-                                            List<string> codes = new List<string>();
-                                            for (int ll = i; ll < code.Count; ll++)
-                                            {
-                                                if (code[ll] == "#" && code[ll + 1] == "#M")
-                                                {
-                                                    i = ll + 1;
-                                                    break;
-                                                }
-                                                codes.Add(code[ll]);
-                                            }
-                                            mesage += doMath(codes.ToArray(), D, Base);
-                                        }
-                                        else
-                                        {
-                                            mesage += code[i];
-                                            i++;
-                                        }
-                                    }
-                                    if (code[2] == "=")
-                                    {
-                                        ((list)D.referenceVar(code[0])).set(index, mesage);
-                                    }
-                                    else if (code[2] == "+=")
-                                    {
-                                        ((list)D.referenceVar(code[0])).set(index, ((list)D.referenceVar(code[0])).get(index) + mesage);
-                                    }
-                                }
-                                catch
-                                {
-                                    throw new Exception("Initialization error " + Base.position);
-                                }
-                                break;
+                            //case ("double"):
+                            //    try
+                            //    {
+                            //        double j = doMath(code.Skip(3).ToArray(), D, Base);
+                            //        if (code[2] == "=")
+                            //        {
+
+                            //            ((list)D.referenceVar(code[0])).set(index, j);
+
+                            //        }
+                            //        else if (code[2] == "+=")
+                            //        {
+                            //            ((list)D.referenceVar(code[0])).set(index, (double)((list)D.referenceVar(code[0])).get(index) + j);
+
+
+                            //        }
+                            //        else if (code[2] == "-=")
+                            //        {
+                            //            ((list)D.referenceVar(code[0])).set(index, (double)((list)D.referenceVar(code[0])).get(index) - j);
+
+                            //        }
+                            //        else if (code[2] == "*=")
+                            //        {
+                            //            ((list)D.referenceVar(code[0])).set(index, (double)((list)D.referenceVar(code[0])).get(index) * j);
+
+                            //        }
+                            //        else if (code[2] == "/=")
+                            //        {
+                            //            ((list)D.referenceVar(code[0])).set(index, (double)((list)D.referenceVar(code[0])).get(index) / j);
+
+                            //        }
+                            //        else if (code[2] == "++")
+                            //        {
+                            //            ((list)D.referenceVar(code[0])).set(index, (double)((list)D.referenceVar(code[0])).get(index) + 1);
+                            //        }
+                            //        else if (code[2] == "--")
+                            //        {
+                            //            ((list)D.referenceVar(code[0])).set(index, (double)((list)D.referenceVar(code[0])).get(index) - 1);
+                            //        }
+                            //        else if (code[2] == "**")
+                            //        {
+                            //            ((list)D.referenceVar(code[0])).set(index, (double)((list)D.referenceVar(code[0])).get(index) * (double)((list)D.referenceVar(code[0])).get(index));
+                            //        }
+                            //    }
+                            //    catch
+                            //    {
+                            //        throw new Exception("Initialization error " + Base.position);
+                            //    }
+                            //    break;
+                            //case ("string"):
+                            //    try
+                            //    {
+                            //        string mesage = "";
+                            //        for (int i = 3; i < code.Count(); i++)
+                            //        {
+                            //            if (code[i] == "\"" && code[i + 2] == "\"")
+                            //            {
+                            //                mesage += D.referenceVar(code[i + 1]);
+                            //                i += 2;
+                            //            }
+                            //            else if (code[i] == "!S!")
+                            //            {
+                            //                mesage += " ";
+                            //            }
+                            //            else if (code[i] == "\n")
+                            //            {
+                            //                mesage += "\n";
+                            //            }
+                            //            //else if (code[i] == "!L!")
+                            //            //{
+                            //            //    mesage += ((list)D.referenceVar(code[i + 1])).get((int.TryParse(code[i + 2], out int j) ? j : ((D.isnumvar(code[i + 2]) ? ((D.inint(code[i + 2]) ? D.referenceI(code[i + 2]) : ((int)D.referenceD(code[i + 2])))) : throw new ArgumentException("error with lists")))));
+                            //            //    i += 2;
+                            //            //}
+                            //            else if (code[i] == "M#" && code[i + 1] == "#")
+                            //            {
+
+                            //                List<string> codes = new List<string>();
+                            //                for (int ll = i; ll < code.Count; ll++)
+                            //                {
+                            //                    if (code[ll] == "#" && code[ll + 1] == "#M")
+                            //                    {
+                            //                        i = ll + 1;
+                            //                        break;
+                            //                    }
+                            //                    codes.Add(code[ll]);
+                            //                }
+                            //                mesage += doMath(codes.ToArray(), D, Base);
+                            //            }
+                            //            else
+                            //            {
+                            //                mesage += code[i];
+                            //                i++;
+                            //            }
+                            //        }
+                            //        if (code[2] == "=")
+                            //        {
+                            //            ((list)D.referenceVar(code[0])).set(index, mesage);
+                            //        }
+                            //        else if (code[2] == "+=")
+                            //        {
+                            //            ((list)D.referenceVar(code[0])).set(index, ((list)D.referenceVar(code[0])).get(index) + mesage);
+                            //        }
+                            //    }
+                            //    catch
+                            //    {
+                            //        throw new Exception("Initialization error " + Base.position);
+                            //    }
+                            //    break;
                             default:
                                 string typess = D.custtypeofkey(code[0]);
                                 if (typess != "Null")
                                 {
-                                    Base.commandRegistry.seters[typess](code, D, Base);
+                                    ((list)D.referenceVar(code[0])).set(index, Base.commandRegistry.listsaaa[typess](code, D, Base));
                                 }
                                 break;
 
@@ -4095,124 +4163,129 @@ namespace jumpE_basic
                     }
 
                 }
+                if(D.custtypeofkey(code[0]) != "Null")
+                {
+                    string typess = D.custtypeofkey(code[0]);
+                    Base.commandRegistry.seters[typess](code, D, Base);
+                }
 
             }
         }
-        public class string_func : command_centrall
-        {
-            //pre_defined_variable varlee;
-            CommandRegistry commands;
-            public string_func(pre_defined_variable j, CommandRegistry c)
-            {
-                //this.varlee = j;
-                this.commands = c;
-            }
-            public override void Execute(List<string> code, Data D, base_runner Base)
-            {
-                try
-                {
-                    string mesage = "";
-                    if (code.Count() == 2)
-                    {
-                        D.setS(code[1], mesage);
-                        //this.commands.add_command(code[1], this.varlee);
-                    }
-                    else if (code[2] == "=")
-                    {
-                        mesage = "";
-                        for (int i = 3; i < code.Count(); i++)
-                        {
-                            if (code[i] == "\"" && code[i + 2] == "\"")
-                            {
-                                mesage += D.referenceVar(code[i + 1]);
-                                i += 2;
+        //public class string_func : command_centrall
+        //{
+        //    //pre_defined_variable varlee;
+        //    CommandRegistry commands;
+        //    public string_func(pre_defined_variable j, CommandRegistry c)
+        //    {
+        //        //this.varlee = j;
+        //        this.commands = c;
+        //    }
+        //    public override void Execute(List<string> code, Data D, base_runner Base)
+        //    {
+        //        try
+        //        {
+        //            string mesage = "";
+        //            if (code.Count() == 2)
+        //            {
+        //                D.setS(code[1], mesage);
+        //                //this.commands.add_command(code[1], this.varlee);
+        //            }
+        //            else if (code[2] == "=")
+        //            {
+        //                mesage = "";
+        //                for (int i = 3; i < code.Count(); i++)
+        //                {
+        //                    if (code[i] == "\"" && code[i + 2] == "\"")
+        //                    {
+        //                        mesage += D.referenceVar(code[i + 1]);
+        //                        i += 2;
 
-                            }
-                            else if (Mathss.ContainsKey(code[i]))
-                            {
-                                string[] mess = Mathss[code[i]](code.ToArray(), D, Base, i, 0);
-                                mesage += mess[0];
-                                i += int.Parse(mess[1]);
-                            }
+        //                    }
+        //                    else if (Mathss.ContainsKey(code[i]))
+        //                    {
+        //                        string[] mess = Mathss[code[i]](code.ToArray(), D, Base, i, 0);
+        //                        mesage += mess[0];
+        //                        i += int.Parse(mess[1]);
+        //                    }
 
-                            else if (code[i] == "\n")
-                            {
-                                mesage += "\n";
-                            }
-                            else if (code[i] == "M#" && code[i + 1] == "#")
-                            {
-                                List<string> codes = new List<string>();
-                                for (int ll = i; ll < code.Count; ll++)
-                                {
-                                    if (code[ll] == "#" && code[ll + 1] == "#M")
-                                    {
-                                        i = ll + 1;
-                                        break;
-                                    }
-                                    codes.Add(code[ll]);
-                                }
-                                mesage += doMath(codes.ToArray(), D, Base);
-                            }
-                            else
-                            {
-                                mesage += code[i];
-                                //i++;
-                            }
-                        }
-                        D.setS(code[1], mesage);
-                        /*if (!(Base.commandRegistry.ContainsCommand(code[1])))
-                        {
-                            Base.commandRegistry.add_command(code[1], this.varlee);
-                        }*/
+        //                    else if (code[i] == "\n")
+        //                    {
+        //                        mesage += "\n";
+        //                    }
+        //                    else if (code[i] == "M#" && code[i + 1] == "#")
+        //                    {
+        //                        List<string> codes = new List<string>();
+        //                        for (int ll = i; ll < code.Count; ll++)
+        //                        {
+        //                            if (code[ll] == "#" && code[ll + 1] == "#M")
+        //                            {
+        //                                i = ll + 1;
+        //                                break;
+        //                            }
+        //                            codes.Add(code[ll]);
+        //                        }
+        //                        mesage += doMath(codes.ToArray(), D, Base);
+        //                    }
+        //                    else
+        //                    {
+        //                        mesage += code[i];
+        //                        //i++;
+        //                    }
+        //                }
+        //                D.setS(code[1], mesage);
+        //                /*if (!(Base.commandRegistry.ContainsCommand(code[1])))
+        //                {
+        //                    Base.commandRegistry.add_command(code[1], this.varlee);
+        //                }*/
 
 
-                    }
-                }
-                catch
-                {
-                    Console.WriteLine("Initialization error");
-                }
-            }
-        }
+        //            }
+        //        }
+        //        catch
+        //        {
+        //            Console.WriteLine("Initialization error");
+        //        }
+        //    }
+        //}
 
-        public class double_func : command_centrall
-        {
-            //pre_defined_variable Math_equation;
-            CommandRegistry commands;
-            IDictionary<string, double> drict = new Dictionary<string, double>();
-            public double_func(pre_defined_variable j, CommandRegistry c)
-            {
-                //this.Math_equation = j;
-                this.commands = c;
-            }
-            public override void Execute(List<string> code, Data D, base_runner Base)
-            {
-                try
-                {
-                    if (code.Count() == 2)
-                    {
-                        D.setD(code[1], 0);
-                        //this.commands.add_command(code[1], this.Math_equation);
-                    }
-                    else if (code[2] == "=")
-                    {
-                        string[] c = code.Skip(3).ToArray();
+        //public class double_func : command_centrall
+        //{
+        //    //pre_defined_variable Math_equation;
+        //    CommandRegistry commands;
+        //    IDictionary<string, double> drict = new Dictionary<string, double>();
+        //    public double_func(pre_defined_variable j, CommandRegistry c)
+        //    {
+        //        //this.Math_equation = j;
+        //        this.commands = c;
+        //    }
+        //    public override void Execute(List<string> code, Data D, base_runner Base)
+        //    {
+        //        try
+        //        {
+        //            if (code.Count() == 2)
+        //            {
+        //                D.setD(code[1], 0);
+        //                //this.commands.add_command(code[1], this.Math_equation);
+        //            }
+        //            else if (code[2] == "=")
+        //            {
+        //                string[] c = code.Skip(3).ToArray();
 
-                        D.setD(code[1], doMath(c, D, Base));
-                        /*if (!(Base.commandRegistry.ContainsCommand(code[1])))
-                        {
-                            Base.commandRegistry.add_command(code[1], this.Math_equation);
-                        }*/
+        //                D.setD(code[1], doMath(c, D, Base));
+        //                /*if (!(Base.commandRegistry.ContainsCommand(code[1])))
+        //                {
+        //                    Base.commandRegistry.add_command(code[1], this.Math_equation);
+        //                }*/
 
-                    }
+        //            }
 
-                }
-                catch
-                {
-                    Console.WriteLine("Initialization error");
-                }
-            }
-        }
+        //        }
+        //        catch
+        //        {
+        //            Console.WriteLine("Initialization error");
+        //        }
+        //    }
+        //}
         public class end : command_centrall
         {
             public override void Execute(List<string> code, Data D, base_runner Base)
@@ -4238,9 +4311,9 @@ namespace jumpE_basic
                 try
                 {
                     int a;
-                    if (D.inint(code[1]))
+                    if ((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[1]), code[1]) is Number :  false)
                     {
-                        a = (D.referenceI(code[1]));
+                        a = (int)((Number)D.referenceCustom(D.custtypeofkey(code[1]), code[1])).get_value();
                         Base.changePosition(a);
                     }
                     else if (int.TryParse(code[1], out a))
@@ -4273,25 +4346,25 @@ namespace jumpE_basic
 
             }
         }
-        public class line_number : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
-            {
-                try
-                {
-                    if (D.inint(code[1]))
-                    {
-                        int x = Base.get_position();
-                        D.setI(code[1], (x));
-                    }
+        //public class line_number : command_centrall
+        //{
+        //    public override void Execute(List<string> code, Data D, base_runner Base)
+        //    {
+        //        try
+        //        {
+        //            //if (D.inint(code[1]))
+        //            //{
+        //            //    int x = Base.get_position();
+        //            //    D.setI(code[1], (x));
+        //            //}
 
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e + " Line: " + Base.get_position());
-                }
-            }
-        }
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            Console.WriteLine(e + " Line: " + Base.get_position());
+        //        }
+        //    }
+        //}
         /*public class Data
         {
             Dictionary<string, string> strings = new Dictionary<string, string>();
@@ -4343,23 +4416,23 @@ namespace jumpE_basic
         {
             public override void Execute(List<string> code, Data D, base_runner Base)
             {
-                if (D.inint(code[1]))
-                {
-                    Base.return_value = D.referenceI(code[1]);
-                }
-                else if (D.indouble(code[1]))
-                {
-                    Base.return_value = D.referenceD(code[1]);
-                }
-                else if (D.instring(code[1]))
-                {
-                    Base.return_value = D.referenceS(code[1]);
-                }
+                //if (D.inint(code[1]))
+                //{
+                //    Base.return_value = D.referenceI(code[1]);
+                //}
+                //else if (D.indouble(code[1]))
+                //{
+                //    Base.return_value = D.referenceD(code[1]);
+                //}
+                //else if (D.instring(code[1]))
+                //{
+                //    Base.return_value = D.referenceS(code[1]);
+                //}
                 //else if (D.isLine(code[1]))
                 //{
                 //    Base.return_value = D.referenceLine(code[1]);
                 //}
-                else if (D.isFunction(code[1]))
+                if (D.isFunction(code[1]))
                 {
                     Base.return_value = D.referenceFunction(code[1]);
                 }
@@ -4378,6 +4451,10 @@ namespace jumpE_basic
                 else if (double.TryParse(code[1], out double j))
                 {
                     Base.return_value = j;
+                }
+                else if(D.custtypeofkey(code[1]) != "Null")
+                {
+                    Base.return_value = D.referenceCustom(D.custtypeofkey(code[1]), code[1]);
                 }
             }
         }
@@ -4452,14 +4529,17 @@ namespace jumpE_basic
             else if (a.t == "list")
             {
 
-                string[] equationb = getfromlist2(equation, D, Base, i + 1, k + 1, (list)a.get((int.TryParse(equation[i], out int j) ? j : ((D.isnumvar(equation[i]) ? ((D.inint(equation[i]) ? D.referenceI(equation[i]) : ((int)D.referenceD(equation[i])))) : throw new ArgumentException("error with lists"))))));
+                string[] equationb = getfromlist2(equation, D, Base, i + 1, k + 1, (list)a.get((int)(double.TryParse(equation[i], out double j) ? j : ((D.isnumvar(equation[i]) ? ((Number)D.referenceCustom(D.custtypeofkey(equation[i]), equation[i])).get_value() : throw new ArgumentException("error with lists"))))));
                 equationa += equationb[0];
                 k = int.Parse(equationb[1]) - 2;
             }
             else
             {
-                var d = a.get((int.TryParse(equation[i], out int j) ? j : ((D.isnumvar(equation[i]) ? ((D.inint(equation[i]) ? D.referenceI(equation[i]) : ((int)D.referenceD(equation[i])))) : throw new ArgumentException("error with lists")))));
-                equationa += d;
+                if (D.custtypeofkey(a.t) != "Null")
+                {
+                    var d = (a.get((int)(int.TryParse(equation[i], out int j) ? j : (D.isnumvar(equation[i])) ? ((Number)D.referenceCustom(D.custtypeofkey(equation[i]), equation[i] )).get_value() : throw new Exception("List Error"))));
+                    equationa += d;
+                }
             }
 
             string[] f = { equationa, (k).ToString() };
@@ -4477,13 +4557,13 @@ namespace jumpE_basic
                     return new string[] { ((list)D.referenceVar(equation[i + 1])).ToString(), (k).ToString() };
                 }
 
-                string[] equationb = getfromlist2(equation, D, Base, i + 3, k + 1, (list)(((list)D.referenceVar(equation[i + 1])).get((int.TryParse(equation[i + 2], out int j) ? j : ((D.isnumvar(equation[i + 2]) ? ((D.inint(equation[i + 2]) ? D.referenceI(equation[i + 2]) : ((int)D.referenceD(equation[i + 2])))) : throw new ArgumentException("error with lists")))))));
+                string[] equationb = getfromlist2(equation, D, Base, i + 3, k + 1, (list)(((list)D.referenceVar(equation[i + 1])).get((int.TryParse(equation[i + 2], out int j) ? j : ((D.isnumvar(equation[i + 2]))) ? (int)((Number)D.referenceVar(equation[i + 2])).get_value() : throw new ArgumentException("error with lists")))));
                 equationa += equationb[0];
                 k = int.Parse(equationb[1]) - 2;
             }
             else
             {
-                var d = ((list)D.referenceVar(equation[i + 1])).get((int.TryParse(equation[i + 2], out int j) ? j : ((D.isnumvar(equation[i + 2]) ? ((D.inint(equation[i + 2]) ? D.referenceI(equation[i + 2]) : ((int)D.referenceD(equation[i + 2])))) : throw new ArgumentException("error with lists")))));
+                var d = ((list)D.referenceVar(equation[i + 1])).get((int.TryParse(equation[i + 2], out int j)) ? j : ((D.isnumvar(equation[i + 2]))) ? ((D.isnumvar(equation[i + 2]))) ? (int)((Number)D.referenceVar(equation[i+2])).get_value() : throw new ArgumentException("error with lists") : throw new ArgumentException("error with lists"));
                 equationa += d;
             }
 
