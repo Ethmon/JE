@@ -602,6 +602,11 @@ namespace jumpE_basic
             return false;
         }
     }
+
+    public interface Hashable
+    {
+        public byte[] hash();
+    }
     public class Data
     {
         ISet<string> keys = new HashSet<string>();
@@ -733,6 +738,7 @@ namespace jumpE_basic
             }
             File.WriteAllText(filePath, Environment.NewLine + Environment.NewLine + Environment.NewLine + functionsData + Environment.NewLine + filesData + Environment.NewLine + sheetsData);
         }
+        
         public void save_specific_var(string key, string path)
         {
             //check type of var and save it to file
@@ -944,6 +950,13 @@ namespace jumpE_basic
         {
             if (custtypeofkey(key) != "Null")
                 if(custom_types[custtypeofkey(key)][key] is Number)
+                    return true;
+            return false;
+        }
+        public bool isHashable(string key)
+        {
+            if (custtypeofkey(key) != "Null")
+                if (custom_types[custtypeofkey(key)][key] is Hashable)
                     return true;
             return false;
         }
@@ -2644,23 +2657,23 @@ namespace jumpE_basic
                         }
                         bool result = false;
                         string equation = "";
-                        if (statments[iff][1] == "bool")
-                        {
-                            if(statments[iff][2] == "true")
-                            {
-                                result = true;
-                            }
-                            else if (statments[iff][2] == "false")
-                            {
-                                result = false;
-                            }
-                            else if ((D.custtypeofkey(statments[iff][2]))!="Null")
-                                if(D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2]) is TORF)
-                                {
-                                    result = ((TORF)D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2])).booledval();
-                                }
+                        //if (statments[iff][1] == "bool")
+                        //{
+                        //    if(statments[iff][2] == "true")
+                        //    {
+                        //        result = true;
+                        //    }
+                        //    else if (statments[iff][2] == "false")
+                        //    {
+                        //        result = false;
+                        //    }
+                        //    else if ((D.custtypeofkey(statments[iff][2]))!="Null")
+                        //        if(D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2]) is TORF)
+                        //        {
+                        //            result = ((TORF)D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2])).booledval();
+                        //        }
                             
-                        }
+                        //}
                         /*if (code.Count() == 2)
                         {
                             D.setI(code[1], 0);
@@ -2668,7 +2681,7 @@ namespace jumpE_basic
 
                         }*/ // this will be for booleans when i get around to 
                             //else { }
-                        else if (statments[iff][1] == "obj")
+                        if (statments[iff][1] == "obj")
                         {
                             if (D.custtypeofkey(statments[iff][2]) != "Null" && D.custtypeofkey(statments[iff][3]) != "Null"&& D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2]) == D.referenceCustom(D.custtypeofkey(statments[iff][3]), statments[iff][3]))
                                 result = true;
@@ -4613,6 +4626,9 @@ namespace jumpE_basic
 
 
 
+
+
+        // Token class for representing tokens in expressions
         public class Token
         {
             public string Value { get; }
@@ -4622,9 +4638,10 @@ namespace jumpE_basic
             }
         }
 
+        // Tokenizer class for breaking expressions into tokens
         public class Math_Tokenizer
         {
-            private static readonly Regex tokenPattern = new Regex(@"\d+|true|false|\+|\-|\*|\/|\%|\(|\)|&&|\|\||!|<=|>=|<|>|==");
+            private static readonly Regex tokenPattern = new Regex(@"\d+|true|false|\+|\-|\*|\/|\%|\(|\)|&&|\|\||!|<=|>=|<|>|==|[^\s]+");
 
             public static List<Token> Tokenize(string expression)
             {
@@ -4640,12 +4657,15 @@ namespace jumpE_basic
             }
         }
 
+        // Abstract class for AST nodes
         public abstract class AstNode
         {
             public abstract double Evaluate();
             public virtual bool EvaluateBoolean() => throw new Exception("Cannot evaluate as Boolean.");
+            public virtual byte[] EvaluateByteArray() => throw new Exception("Cannot evaluate as byte array.");
         }
 
+        // Node for numeric values
         public class NumberNode : AstNode
         {
             public double Value { get; }
@@ -4661,6 +4681,7 @@ namespace jumpE_basic
             }
         }
 
+        // Node for boolean values
         public class BooleanNode : AstNode
         {
             public bool Value { get; }
@@ -4681,78 +4702,147 @@ namespace jumpE_basic
             }
         }
 
-        public class BinaryOpNode : AstNode
+        // Node for byte array operations
+        public class ByteArrayOpNode : AstNode
         {
-            public AstNode Left { get; }
-            public AstNode Right { get; }
+            public byte[] Left { get; }
+            public byte[] Right { get; }
             public string Operator { get; }
 
-            public BinaryOpNode(AstNode left, AstNode right, string operatorSymbol)
+            public ByteArrayOpNode(byte[] left, byte[] right, string operatorSymbol)
             {
                 Left = left;
                 Right = right;
                 Operator = operatorSymbol;
             }
 
-            public override double Evaluate()
+            public override byte[] EvaluateByteArray()
             {
                 switch (Operator)
                 {
-                    case "+": return Left.Evaluate() + Right.Evaluate();
-                    case "-": return Left.Evaluate() - Right.Evaluate();
-                    case "*": return Left.Evaluate() * Right.Evaluate();
-                    case "/": return Left.Evaluate() / Right.Evaluate();
-                    case "%": return Left.Evaluate() % Right.Evaluate();
-                    default: throw new Exception("Unknown operator");
+                    case "+":
+                        return Left.Concat(Right).ToArray();
+
+                    case "-":
+                        if (Right.Length > Left.Length)
+                            throw new Exception("Cannot remove more elements than available.");
+                        return Left.Take(Left.Length - Right.Length).ToArray();
+
+                    case "-+":
+                        var reducedArray = Left.Take(Left.Length - Right.Length).ToArray();
+                        return reducedArray.Concat(Right).ToArray();
+
+                    case "-f":
+                        if (Right.Length > Left.Length)
+                            throw new Exception("Cannot remove more elements than available.");
+                        return Left.Skip(Right.Length).ToArray();
+
+                    case "+f":
+                        return Right.Concat(Left).ToArray();
+
+                    case "-+f":
+                        var reducedArrayF = Left.Skip(Right.Length).ToArray();
+                        return Right.Concat(reducedArrayF).ToArray();
+
+                    default:
+                        throw new Exception("Unknown byte array operator");
                 }
             }
 
-            public override bool EvaluateBoolean()
+            public override double Evaluate()
             {
-                switch (Operator)
-                {
-                    case "&&": return Left.EvaluateBoolean() && Right.EvaluateBoolean();
-                    case "||": return Left.EvaluateBoolean() || Right.EvaluateBoolean();
-                    case "==": return Left.EvaluateBoolean() == Right.EvaluateBoolean();
-                    case "<": return Left.Evaluate() < Right.Evaluate();
-                    case ">": return Left.Evaluate() > Right.Evaluate();
-                    case "<=": return Left.Evaluate() <= Right.Evaluate();
-                    case ">=": return Left.Evaluate() >= Right.Evaluate();
-                    default: throw new Exception("Unknown boolean operator");
-                }
+                throw new Exception("Byte array operations do not support numeric evaluation.");
             }
         }
 
-        public class UnaryOpNode : AstNode
+        // Node for byte array comparisons
+        public class ByteArrayComparisonNode : AstNode
         {
-            public AstNode Operand { get; }
+            public byte[] Left { get; }
+            public byte[] Right { get; }
             public string Operator { get; }
 
-            public UnaryOpNode(AstNode operand, string operatorSymbol)
+            public ByteArrayComparisonNode(byte[] left, byte[] right, string operatorSymbol)
             {
-                Operand = operand;
+                Left = left;
+                Right = right;
                 Operator = operatorSymbol;
             }
 
-            public override double Evaluate()
-            {
-                throw new Exception("Unary operators are not supported in math expressions.");
-            }
-
             public override bool EvaluateBoolean()
             {
-                if (Operator == "!")
+                if (Operator == "==")
                 {
-                    return !Operand.EvaluateBoolean();
+                    return Left.SequenceEqual(Right);
                 }
+                throw new Exception("Unknown byte array comparison operator");
+            }
 
-                throw new Exception("Unknown unary boolean operator");
+            public override double Evaluate()
+            {
+                throw new Exception("Byte array comparisons do not support numeric evaluation.");
             }
         }
 
+        // Node for binary operations
+        public class BinaryOpNode : AstNode
+        {
+            private readonly AstNode left;
+            private readonly AstNode right;
+            private readonly string op;
+
+            public BinaryOpNode(AstNode left, AstNode right, string op)
+            {
+                this.left = left;
+                this.right = right;
+                this.op = op;
+            }
+
+            public override double Evaluate()
+            {
+                double leftValue = left.Evaluate();
+                double rightValue = right.Evaluate();
+
+                return op switch
+                {
+                    "+" => leftValue + rightValue,
+                    "-" => leftValue - rightValue,
+                    "*" => leftValue * rightValue,
+                    "/" => leftValue / rightValue,
+                    "%" => leftValue % rightValue,
+                    _ => throw new Exception("Unknown operator")
+                };
+            }
+        }
+
+        // Node for unary operations
+        public class UnaryOpNode : AstNode
+        {
+            private readonly AstNode operand;
+            private readonly string op;
+
+            public UnaryOpNode(AstNode operand, string op)
+            {
+                this.operand = operand;
+                this.op = op;
+            }
+
+            public override double Evaluate()
+            {
+                double value = operand.Evaluate();
+                return op switch
+                {
+                    "!" => value == 0 ? 1.0 : 0.0,
+                    _ => throw new Exception("Unknown operator")
+                };
+            }
+        }
+
+        // Parser class for parsing expressions
         public class Parser
         {
             private Queue<Token> tokens;
+
             private static readonly Dictionary<string, int> precedence = new Dictionary<string, int>()
     {
         { "||", 1 },
@@ -4776,6 +4866,16 @@ namespace jumpE_basic
             public AstNode ParseBooleanExpression()
             {
                 return ParseBinaryExpression(0, true);
+            }
+
+            public AstNode ParseByteArrayExpression()
+            {
+                return ParseByteArrayBinaryExpression();
+            }
+
+            public AstNode ParseByteArrayComparisonExpression()
+            {
+                return ParseByteArrayComparisonExpression();
             }
 
             private AstNode ParseBinaryExpression(int parentPrecedence, bool isBoolean)
@@ -4812,7 +4912,7 @@ namespace jumpE_basic
                 else if (token.Value == "(")
                 {
                     var expression = ParseBinaryExpression(0, isBoolean);
-                    tokens.Dequeue();
+                    tokens.Dequeue();  // Discard closing ')'
                     return expression;
                 }
                 else if (token.Value == "!" && isBoolean)
@@ -4823,21 +4923,77 @@ namespace jumpE_basic
 
                 throw new Exception("Unexpected token");
             }
+
+            private ByteArrayOpNode ParseByteArrayBinaryExpression()
+            {
+                var left = ParseByteArrayPrimaryExpression();
+
+                while (tokens.Count > 0 && tokens.Peek().Value is "+" or "-" or "-+" or "-f" or "+f" or "-+f")
+                {
+                    var op = tokens.Dequeue().Value;
+                    var right = ParseByteArrayPrimaryExpression();
+                    left = new ByteArrayOpNode(left, right, op).EvaluateByteArray(); ;
+                }
+
+                return new ByteArrayOpNode(left, Array.Empty<byte>(), "");
+            }
+
+            private ByteArrayComparisonNode ParseByteArrayComparisonExpressionA()
+            {
+                var left = ParseByteArrayPrimaryExpression();
+
+                if (tokens.Count > 0 && tokens.Peek().Value == "==")
+                {
+                    var op = tokens.Dequeue().Value;
+                    var right = ParseByteArrayPrimaryExpression();
+                    return new ByteArrayComparisonNode(left, right, op);
+                }
+
+                throw new Exception("Unexpected token or missing operator");
+            }
+
+            private byte[] ParseByteArrayPrimaryExpression()
+            {
+                var token = tokens.Dequeue();
+
+                if (token.Value.StartsWith("[") && token.Value.EndsWith("]"))
+                {
+                    return token.Value.Trim('[', ']').Split(',').Select(byte.Parse).ToArray();
+                }
+
+                throw new Exception("Unexpected token");
+            }
         }
+
+
+        static byte[] EvaluateByteArrayOperation(string expression)
+        {
+            var tokens = Math_Tokenizer.Tokenize(expression);
+            var parser = new Parser(tokens);
+            return parser.ParseByteArrayExpression().EvaluateByteArray();
+        }
+
+        static bool EvaluateByteArrayComparison(string expression)
+        {
+            var tokens = Math_Tokenizer.Tokenize(expression);
+            var parser = new Parser(tokens);
+            return parser.ParseByteArrayComparisonExpression().EvaluateBoolean();
+        }
+
         static double EvaluateMathExpression(string expression)
         {
             var tokens = Math_Tokenizer.Tokenize(expression);
             var parser = new Parser(tokens);
-            AstNode ast = parser.ParseMathExpression();
-            return ast.Evaluate();
+            return parser.ParseMathExpression().Evaluate();
         }
+
         static bool EvaluateBooleanExpression(string expression)
         {
             var tokens = Math_Tokenizer.Tokenize(expression);
             var parser = new Parser(tokens);
-            AstNode ast = parser.ParseBooleanExpression();
-            return ast.EvaluateBoolean();
+            return parser.ParseBooleanExpression().EvaluateBoolean();
         }
+
 
 
         public static double doMath(string[] equation, Data D, base_runner Base)
@@ -4852,7 +5008,7 @@ namespace jumpE_basic
                 }
                 else if (D.isnumvar(equation[i].ToString()))
                 {
-                    equationa += D.referenceVar(equation[i].ToString()) + " ";
+                    equationa += ((Number)D.referenceVar(equation[i])).get_value() + " ";
                 }
                 else if (Mathss.ContainsKey(equation[i]))
                 {
@@ -4882,7 +5038,7 @@ namespace jumpE_basic
                 }
                 else if (D.isnumvar(equation[i].ToString()))
                 {
-                    equationa += D.referenceVar(equation[i].ToString()) + " ";
+                    equationa += ((Number)D.referenceVar(equation[i])).get_value() + " ";
                 }
                 else if (Mathss.ContainsKey(equation[i]))
                 {
@@ -4901,6 +5057,67 @@ namespace jumpE_basic
 
 
 
+
+
+
+        public static byte[] dobyteMath(string[] equation, Data D, base_runner Base)
+        {
+            string equationa = "";
+            for (int i = 0; i < equation.Length; i++)
+            {
+                if (equation[i] == "+" || equation[i] == "-" || equation[i] == "/" || equation[i] == "*" || equation[i] == "sin" || equation[i] == "cos" || equation[i] == "tan" ||
+                                       equation[i] == "csc" || equation[i] == "sec" || equation[i] == "%" || equation[i] == "cot" || equation[i] == "root" || equation[i] == ")" || equation[i] == "(" || equation[i] == " ")
+                {
+                    equationa += equation[i] + " ";
+                }
+                else if (D.isHashable(equation[i]))
+                {
+                    equationa += ((Hashable)D.referenceVar(equation[i])).hash() + " ";
+                }
+                else if (Mathss.ContainsKey(equation[i]))
+                {
+                    string[] equationb = Mathss[equation[i]](equation, D, Base, i, 0);
+                    equationa += equationb[0] + " ";
+                    i += int.Parse(equationb[1]);
+                }
+                else if (double.TryParse(equation[i], out double k))
+                {
+                    equationa += k + " ";
+                }
+
+            }
+            return EvaluateByteArrayOperation(equationa);
+
+        }
+
+        public static bool dobyteMathbool(string[] equation, Data D, base_runner Base)
+        {
+            string equationa = "";
+            for (int i = 0; i < equation.Length; i++)
+            {
+                if (equation[i] == "+" || equation[i] == "-" || equation[i] == "==" || equation[i] == "!=" || equation[i] == "<=" || equation[i] == ">=" || equation[i] == ">" || equation[i] == "<" || equation[i] == "/" || equation[i] == "*" || equation[i] == "sin" || equation[i] == "cos" || equation[i] == "tan" ||
+                                       equation[i] == "csc" || equation[i] == "sec" || equation[i] == "%" || equation[i] == "cot" || equation[i] == "root" || equation[i] == ")" || equation[i] == "(" || equation[i] == " ")
+                {
+                    equationa += equation[i] + " ";
+                }
+                else if (D.isHashable(equation[i]))
+                {
+                    equationa += ((Hashable)D.referenceVar(equation[i])).hash() + " ";
+                }
+                else if (Mathss.ContainsKey(equation[i]))
+                {
+                    string[] equationb = Mathss[equation[i]](equation, D, Base, i, 0);
+                    equationa += equationb[0] + " ";
+                    i += int.Parse(equationb[1]);
+                }
+                else if (double.TryParse(equation[i], out double k))
+                {
+                    equationa += equation[i] + " ";
+                }
+
+            }
+            return EvaluateByteArrayComparison(equationa);
+        }
 
 
 
