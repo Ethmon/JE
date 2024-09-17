@@ -8,7 +8,8 @@ using System.Diagnostics;
 using System.IO;
 //using DATA_CONVERTER;
 using System.Reflection;
-//using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 //using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CSharp;
 using System.CodeDom.Compiler;
@@ -24,8 +25,10 @@ using System.Net.Mail;
 using System.Runtime.CompilerServices;
 using System.CodeDom;
 using System.Diagnostics.Eventing.Reader;
+using System.Runtime.InteropServices.JavaScript;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Collections;
+using static jumpE_basic.base_runner;
 
 namespace jumpE_basic
 {
@@ -220,7 +223,7 @@ namespace jumpE_basic
 //    }
     public interface Valued
     {
-        object getV();
+        public object getV();
     }
     public class UNIQ
     {
@@ -338,11 +341,11 @@ namespace jumpE_basic
     }
     public interface CustTypeName
     {
-        string name();
+        public string name();
     }
     public interface Number
     { 
-        double get_value();
+        public double get_value();
     }
 
     public class GB
@@ -367,7 +370,7 @@ namespace jumpE_basic
             return type;
         }
     }
-    public partial class list : JEnumeral , CustTypeName
+    public class list : JEnumeral , CustTypeName
     {
         public string name()
         {
@@ -606,11 +609,12 @@ namespace jumpE_basic
     public interface Hashable
     {
         public byte[] hash();
+        
     }
     public class Data
     {
-        ISet<string> keys = new HashSet<string>();
-        public ISet<string> custtype = new HashSet<string>();
+        public ISet<string> keys = new HashSet<string>();
+        public static ISet<string> custtype = new HashSet<string>();
         //Dictionary<string, string> strings = new Dictionary<string, string>();
         //Dictionary<string, double> doubles = new Dictionary<string, double>();
         //Dictionary<string, int> integers = new Dictionary<string, int>();
@@ -720,6 +724,11 @@ namespace jumpE_basic
             d.files = new Dictionary<string, JFile>(files);
             return d;
         }
+        public static void add_custtype(string type)
+        {
+            custtype.Add(type);
+            //custom_types.Add(type, new Dictionary<string, object>());
+        }
         public void SaveToFile(string filePath)
         {
             //put a | between each variable
@@ -738,6 +747,8 @@ namespace jumpE_basic
             }
             File.WriteAllText(filePath, Environment.NewLine + Environment.NewLine + Environment.NewLine + functionsData + Environment.NewLine + filesData + Environment.NewLine + sheetsData);
         }
+
+        
         
         public void save_specific_var(string key, string path)
         {
@@ -1308,11 +1319,11 @@ namespace jumpE_basic
             // retruns a string of they type of the variable assigned to the key
             if (keys.Contains(key))
             {
-                foreach (Dictionary<string, object> dict in custom_types.Values)
+                foreach (string dict in custom_types.Keys)
                 {
-                    if (dict.ContainsKey(key))
+                    if (custom_types[dict].ContainsKey(key))
                     {
-                        type = key;
+                        type = dict;
                         break;
                     }
                 }
@@ -1353,6 +1364,10 @@ namespace jumpE_basic
                 {
                     if (custtype.Contains(typeee))
                     {
+                        if (!custom_types.ContainsKey(typeee))
+                        {
+                            custom_types.Add(typeee, new Dictionary<string, object>());
+                        }
                         if (keys.Contains(key))
                         {
                             SuperRemove(key);
@@ -1602,13 +1617,22 @@ namespace jumpE_basic
                 {
                     try
                     {
+                        
                         string hells = Console.ReadLine();
                         string fileName = @"" + hells;
+                        //Console.WriteLine(Path.GetDirectoryName(hells));
+                        var timer = new Stopwatch();
+                        timer.Start();
                         using (StreamReader streamReader = File.OpenText(fileName))
                         {
                             string text = streamReader.ReadToEnd();
                             base_runner bases = new base_runner(text, data, Path.GetDirectoryName(hells));
                         }
+                        timer.Stop();
+
+                        TimeSpan timeTaken = timer.Elapsed;
+                        string foo = "Time taken: " + timeTaken.ToString(@"m\:ss\.fff");
+                        Console.WriteLine(foo);
                     }
                     catch (Exception e)
                     {
@@ -1753,8 +1777,9 @@ namespace jumpE_basic
         public static bool debg = false;
         public static bool hard_stop = false;
         //public string data_storage = "@";
-        private new pre_defined_variable f = new pre_defined_variable();
+        //private new pre_defined_variable f = new pre_defined_variable();
         public string localPath = "";
+        public static string currentPath = "";
         public static Dictionary<string, Func<string[], Data, base_runner, int, int, string[]>> Mathss = new Dictionary<string, Func<string[], Data, base_runner, int, int, string[]>>() { { "!L!", getfromlist }, { "!M!", getfrommethod }, { "!S!", spawningspace } };
         public base_runner(string taken, Data data, string localPath)
         {
@@ -1768,6 +1793,7 @@ namespace jumpE_basic
             //data.setI("LNT", 0);
             while (this.run)
             {
+                currentPath = localPath;
                 if (debg)
                 {
                     Console.WriteLine(lines[position] + "   " + real_count);
@@ -1787,14 +1813,15 @@ namespace jumpE_basic
                 //catch { Console.WriteLine("Error: 2, Line not recognized"); }
                 //data.setI("LNC", this.position);// set line number for use as a variable in the code
                 //data.setI("LNT", data.referenceI("LNT") + 1);//total amount of lines that have been run per session of the data converter
-                if (commandRegistry.ContainsCommand(this.code[0]))
+                if (CommandRegistry.ContainsCommand(this.code[0]))
                 {
+                    CommandRegistry.GetCommandDefinition(this.code[0])(this.code, datas[datas.Count() - 1], this);
                     // distinguish between inner and outer commands, inner commands are commands that are built into the Basic interpreter (inner commands can allso be imported using useC),outer commands are commands that are imported using use.
-                    interorouter = commandRegistry.GetCommandDefinition(this.code[0]);
-                    if (interorouter is command_centrall)
-                    {
-                        ((command_centrall)(interorouter)).Execute(this.code, datas[datas.Count() - 1], this);
-                    }
+                    //interorouter = commandRegistry.GetCommandDefinition(this.code[0]);
+                    //if (interorouter is command_centrall)
+                    //{
+                    //    ((command_centrall)(interorouter)).Execute(this.code, datas[datas.Count() - 1], this);
+                    //}
                     //if (interorouter is outer_commands)
                     //{
                     //    ((outer_commands)(interorouter)).Execute(this.code, datas[datas.Count() - 1]);
@@ -1804,7 +1831,7 @@ namespace jumpE_basic
                 }
                 else if (datas[datas.Count() - 1].isvar(this.code[0]) && !(lines[position] == "{" || lines[position] == "}" || code[0] == "<<" || code[0] == ">>"))
                 {
-                    f.Execute(this.code, datas[datas.Count() - 1], this);
+                    Pre_defined(this.code, datas[datas.Count() - 1], this);
                 }
                 else
                 {
@@ -1928,44 +1955,93 @@ namespace jumpE_basic
 
         public class CommandRegistry
         {
-            public Dictionary<string, command_centralls> commands = new Dictionary<string, command_centralls>();
-            public Dictionary<string, Func<List<string>, Data, base_runner, bool>> seters = new Dictionary<string, Func<List<string>, Data, base_runner, bool>>();
-            public Dictionary<string, Func<List<string>, Data, base_runner, bool>> listsaaa = new Dictionary<string, Func<List<string>, Data, base_runner, bool>>();
+            public static Dictionary<string, Action<List<string> , Data , base_runner >> commands = new Dictionary<string, Action<List<string>, Data, base_runner>>()
+            {
+                { "return", return_func },{ "<<" , return_func},
+                { "if" , when },
+                { "useC" , useC },
+                { "print" , print},
+                { "jp" , jump },
+                { "end" , end },
+                { "use" , use },
+                { "//" , comment }, { "#" , comment },
+                { "raise" , raise },
+                { "push" , push },
+                { "pop" , pop },
+                { "call" , callLayer },
+                { "side" , sideLayer },
+                { "IDD" , IDD },
+                { "IDT" , IDT },
+                { "free" , free },
+                { "skip" , Skip },
+                { "remL" , remL },
+                { "bring" , bring },
+                { "raiseS" , raiseS },
+                { "raiseSA" ,raiseSA },
+                { "bringA", bringA}, { "pushA" , pushA},
+                { "pushDL" , pushDL }, { "bringDL" , bringDL},
+                { "HS" , Hard_stop },
+                { "save" , save },
+                { "method" , Method_instantiate },
+                { "<><" , set_Return }
+
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            };
+            public static Dictionary<string, Action<List<string>, Data, base_runner>> seters = new Dictionary<string, Action<List<string>, Data, base_runner>>();
+            public static Dictionary<string, Func<List<string>, Data, base_runner, List<object>>> listsaaa = new Dictionary<string, Func<List<string>, Data, base_runner, List<object>>>();
             public CommandRegistry()
             {
-                print print = new print();//prints to console, can use variables and strings by putting them in quotes(must be seperated by spaces)
+                //print print = new print();//prints to console, can use variables and strings by putting them in quotes(must be seperated by spaces)
                 //whenD whend = new whenD();
                 //whenS whens = new whenS();
                 //setS setS = new setS();
-                use use = new use(this);//imports a command from a .cs file, you can either use the file path or put it in the same file as the .exe, these commands only include logic and do not have access to the data converter, they can be used to create neouter commands
+                //use use = new use(this);//imports a command from a .cs file, you can either use the file path or put it in the same file as the .exe, these commands only include logic and do not have access to the data converter, they can be used to create neouter commands
                 //setD setD = new setD();
                 //add add = new add();
-                end end = new end();//end the program
+                //end end = new end();//end the program
                 //subtract subtract = new subtract();
                 //multiply multiply = new multiply();
                 //divide divide = new divide();
-                sideLayer sideLayer = new sideLayer();
-                raise raise = new raise();
-                push push = new push();
-                pop pop = new pop();
-                callLayer callLy = new callLayer();
-                jump jump = new jump();//jumps to a line number or calls a function use "JP >> {function name}" to call a function
-                //inputD inputD = new inputD();//takes a double input and stores it in a variable, variable must allready be initalized 
-                comment comment = new comment();// used to comment out lines of code, can be used with // or #
-                //inputS inputS = new inputS();//takes a string input and stores it in a variable, variable must allready be initalized
-                //inputI inputI = new inputI();//takes a int input and stores it in a variable, variable must allready be initalized
-                useC useC = new useC(this);//this is the full on stuff, this is used to just import code from a .cs file, can create both inner and outer commands, 
-                //line_number line_number = new line_number();// returns the current line number to pre initalize variables. this is an alternatite to LNC
-                pre_defined_variable Math_equation = new pre_defined_variable();// this is not relivent to most, used for variables that have allready been initalzed, can be used to do math with variables
-                //double_func double_func = new double_func(Math_equation, this);//this initalizes a variable as a double, can be used to do math with variables
-                //string_func string_Func = new string_func(Math_equation, this);//this initalizes a variable as a string, can not be used to do math with variables
-                //int_func int_func = new int_func(Math_equation, this);// this initalizes a variable as a int, can be used to do math with variables
-                when when = new when(Math_equation, this);//logic gate, can be used to create if statements, can be used to create while loops, can be used to create for loops, uses {}
-                return_func return_Func = new return_func();// returns to the last jump point, can be used to return from a function
-                commands.Add("return", return_Func); commands.Add("Return", return_Func); commands.Add("RETURN", return_Func); commands.Add("<<", return_Func);
-                commands.Add("when", when); commands.Add("When", when); commands.Add("if", when);
-                commands.Add("useC", useC); commands.Add("usec", useC);
-                commands.Add("print", print); commands.Add("Print", print);
+                //sideLayer sideLayer = new sideLayer();
+                //raise raise = new raise();
+                //push push = new push();
+                //pop pop = new pop();
+                //callLayer callLy = new callLayer();
+                //jump jump = new jump();//jumps to a line number or calls a function use "JP >> {function name}" to call a function
+                ////inputD inputD = new inputD();//takes a double input and stores it in a variable, variable must allready be initalized 
+                //comment comment = new comment();// used to comment out lines of code, can be used with // or #
+                ////inputS inputS = new inputS();//takes a string input and stores it in a variable, variable must allready be initalized
+                ////inputI inputI = new inputI();//takes a int input and stores it in a variable, variable must allready be initalized
+                //useC useC = new useC(this);//this is the full on stuff, this is used to just import code from a .cs file, can create both inner and outer commands, 
+                ////line_number line_number = new line_number();// returns the current line number to pre initalize variables. this is an alternatite to LNC
+                //pre_defined_variable Math_equation = new pre_defined_variable();// this is not relivent to most, used for variables that have allready been initalzed, can be used to do math with variables
+                ////double_func double_func = new double_func(Math_equation, this);//this initalizes a variable as a double, can be used to do math with variables
+                ////string_func string_Func = new string_func(Math_equation, this);//this initalizes a variable as a string, can not be used to do math with variables
+                ////int_func int_func = new int_func(Math_equation, this);// this initalizes a variable as a int, can be used to do math with variables
+                //when when = new when(Math_equation, this);//logic gate, can be used to create if statements, can be used to create while loops, can be used to create for loops, uses {}
+                //return_func return_Func = new return_func();// returns to the last jump point, can be used to return from a function
+                //commands.Add("return", return_Func); commands.Add("Return", return_Func); commands.Add("RETURN", return_Func); commands.Add("<<", return_Func);
+                //commands.Add("when", when); commands.Add("When", when); commands.Add("if", when);
+                //commands.Add("useC", useC); commands.Add("usec", useC);
+                //commands.Add("print", print); commands.Add("Print", print);
                 //commands.Add("inputI", inputI); commands.Add("inputi", inputI); commands.Add("InputI", inputI);
                 //commands.Add("whenD", whend); commands.Add("WhenD", whend);
                 //commands.Add("inputS", inputS); commands.Add("inputs", inputS); commands.Add("InputS", inputS);
@@ -1973,33 +2049,33 @@ namespace jumpE_basic
                 //commands.Add("string", string_Func); commands.Add("String", string_Func); commands.Add("STRING", string_Func);
                // commands.Add("int", int_func); commands.Add("INT", int_func);
                 //commands.Add("whenS", whens); commands.Add("WhenS", whens);
-                commands.Add("jump", jump); commands.Add("jp", jump); commands.Add("JP", jump); commands.Add("JUMP", jump);
+                //commands.Add("jump", jump); commands.Add("jp", jump); commands.Add("JP", jump); commands.Add("JUMP", jump);
                 //commands.Add("double", double_func); commands.Add("DOUBLE", double_func); commands.Add("Double", double_func);
                 /*commands.Add("subtract", subtract); commands.Add("sub", subtract);
                 commands.Add("multiply", multiply); commands.Add("mult", multiply);
                 commands.Add("divide", divide); commands.Add("div", divide);*/
-                commands.Add("end", end); commands.Add("stop", end); commands.Add("END", end);
+                //commands.Add("end", end); commands.Add("stop", end); commands.Add("END", end);
                 //commands.Add("inputD", inputD); commands.Add("inputd", inputD); commands.Add("InputD", inputD);
-                commands.Add("use", use);
+                //commands.Add("use", use);
                 //commands.Add("line_number", line_number); commands.Add("ln", line_number); commands.Add("LN", line_number);
-                commands.Add("comment", comment); commands.Add("//", comment); commands.Add("#", comment);
-                commands.Add("raise", raise); commands.Add("push", push); commands.Add("pop", pop);
-                commands.Add("IDD", new IDD()); commands.Add("IDT", new IDT());
-                commands.Add("free", new free());
-                commands.Add("skip", new Skip());
-                commands.Add("sideLayer", sideLayer); commands.Add("remL", new remL()); commands.Add("callLayer", callLy); commands.Add("bring", new bring());
-                commands.Add("raiseS", new raiseS()); commands.Add("raiseSA", new raiseSA());
-                commands.Add("bringA", new bringA()); commands.Add("pushA", new pushA());
-                commands.Add("pushDL", new pushDL());
+                //commands.Add("comment", comment); commands.Add("//", comment); commands.Add("#", comment);
+                //commands.Add("raise", raise); commands.Add("push", push); commands.Add("pop", pop);
+                //commands.Add("IDD", new IDD()); commands.Add("IDT", new IDT());
+                //commands.Add("free", new free());
+                //commands.Add("skip", new Skip());
+                //commands.Add("sideLayer", sideLayer); commands.Add("remL", new remL()); commands.Add("callLayer", callLy); commands.Add("bring", new bring());
+                //commands.Add("raiseS", new raiseS()); commands.Add("raiseSA", new raiseSA());
+                //commands.Add("bringA", new bringA()); commands.Add("pushA", new pushA());
+                //commands.Add("pushDL", new pushDL());
                 //commands.Add("Line", new Line_func(Math_equation, this));
                 //commands.Add("file", new File_func());
                 //commands.Add("Function", new Function_func(Math_equation, this));
-                commands.Add("bringDL", new bringDL());
-                commands.Add("HS", new Hard_stop());
-                commands.Add("save", new save());
-                commands.Add("method", new Method_instantiate());
+                //commands.Add("bringDL", new bringDL());
+                //commands.Add("HS", new Hard_stop());
+                //commands.Add("save", new save());
+                //commands.Add("method", new Method_instantiate());
                 //commands.Add("list", new listFunc());
-                commands.Add("<><", new set_Return());
+                //commands.Add("<><", new set_Return());
                 // list all commands here :
                 // return, Return , RETURN, <<, when, When, if, useC, usec, print, Print, inputI, inputi, InputI, inputS, inputs, InputS, string, String, STRING, int, INT, whenS, WhenS, jump, jp, JP, JUMP, double, DOUBLE, Double, end, stop, END, inputD, inputd, InputD, use, line_number, ln, LN, comment, //, #, raise, push, pop, IDD, IDT, free, skip, sideLayer, remL, callLayer, bring, raiseS, raiseSA, bringA, pushA, pushDL, Line, File, Function, bringDL, HS, 
                 // list all commands that refer to sheets here : 
@@ -2029,7 +2105,7 @@ namespace jumpE_basic
 
 
             }
-            public void add_command(string name, command_centralls type)
+            public static void add_command(string name, Action<List<string>, Data, base_runner> type )
             {
                 if (commands.ContainsKey(name))
                 {
@@ -2037,7 +2113,7 @@ namespace jumpE_basic
                 }
                 commands.Add(name, type);
             }
-            public bool ContainsCommand(string command)
+            public static bool ContainsCommand(string command)
             {
                 if (commands.ContainsKey(command))
                 {
@@ -2049,7 +2125,7 @@ namespace jumpE_basic
                 }
             }
 
-            public command_centralls GetCommandDefinition(string commandName)
+            public static Action<List<string>, Data, base_runner> GetCommandDefinition(string commandName)
             {
                 if (ContainsCommand(commandName))
                 {
@@ -2061,23 +2137,11 @@ namespace jumpE_basic
                 }
             }
         }
-        public class Hard_stop : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static  void Hard_stop(List<string> code, Data D, base_runner Base)
             {
                 base_runner.hard_stop = true;
             }
-        }
-        public class command_centrall : command_centralls
-        {
-            public virtual void Execute(List<string> code, Data D, base_runner Base)
-            {
-                Debug.WriteLine("eh");
-            }
-        }
-        public class Skip : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void Skip(List<string> code, Data D, base_runner Base)
             {
                 int w = 0;
                 int q = Base.position + 1;
@@ -2104,10 +2168,7 @@ namespace jumpE_basic
                     q++;
                 }
             }
-        }
-        public class pushGOD : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static  void pushGOD(List<string> code, Data D, base_runner Base)
             {
                 //if (D.inint(code[1]))
                 //{
@@ -2134,17 +2195,13 @@ namespace jumpE_basic
                     Base.datas[0].setCustom(D.custtypeofkey(code[1]),code[1], D.refrenceCustom(D.custtypeofkey(code[1]), code[1]));
                 }
             }
-        }
-        public class comment : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+
+            public static void comment(List<string> code, Data D, base_runner Base)
             {
             }
-        }
-        public class print : command_centrall
-        {
 
-            public override void Execute(List<string> code, Data D, base_runner Base)
+
+            public static void print(List<string> code, Data D, base_runner Base)
             {
                 try
                 {
@@ -2169,6 +2226,10 @@ namespace jumpE_basic
                             {
                                 Message += ((list)msg).ToString();
                             }
+                            else if(msg is Valued)
+                            {
+                                Message += ((Valued)msg).getV().ToString();
+                            }
                             else Message += msg;
                             i += 2;
                         }
@@ -2188,7 +2249,7 @@ namespace jumpE_basic
                         {
 
                             List<string> codess = new List<string>();
-                            for (int ll = i; ll < code.Count; ll++)
+                            for (int ll = i+2; ll < code.Count; ll++)
                             {
                                 if (code[ll] == "#" && code[ll + 1] == "#M")
                                 {
@@ -2329,10 +2390,7 @@ namespace jumpE_basic
 
 
             }
-        }
-        public class IDD : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void IDD(List<string> code, Data D, base_runner Base)
             {
                 if (code[1] == "\"")
                 {
@@ -2344,10 +2402,7 @@ namespace jumpE_basic
                     D.identifier = double.Parse(code[1]);
                 }
             }
-        }
-        public class IDT : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static  void IDT(List<string> code, Data D, base_runner Base)
             {
                 if (code[1] == "\"")
                 {
@@ -2359,10 +2414,7 @@ namespace jumpE_basic
                     D.typeidentifier = double.Parse(code[1]);
                 }
             }
-        }
-        public class save : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void save(List<string> code, Data D, base_runner Base)
             {
                 // save to file named at code[1]
                 // if code[2] == "all" save all data
@@ -2381,10 +2433,8 @@ namespace jumpE_basic
 
 
             }
-        }
-        public class read : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+
+            public static void read(List<string> code, Data D, base_runner Base)
             {
                 // read from file named at code[1]
                 // if code[2] == "all" read all data
@@ -2397,10 +2447,7 @@ namespace jumpE_basic
                     D.ReadFromFile(code[2] + ".txt");
                 }
             }
-        }
-        public class free : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void free(List<string> code, Data D, base_runner Base)
             {
                 //try
                 /*if (Base.commandRegistry.ContainsCommand(code[1]))
@@ -2414,18 +2461,12 @@ namespace jumpE_basic
                 }
                 //} catch { Console.WriteLine("Error: 4, Unable to Free, Line"+Base.position); }
             }
-        }
-        public class raise : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void raise(List<string> code, Data D, base_runner Base)
             {
                 Base.datas.Add(D.Copy());
 
             }
-        }
-        public class raiseS : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void raiseS(List<string> code, Data D, base_runner Base)
             {
                 Data datas = new Data();
                 for (int i = 1; i < code.Count; i++)
@@ -2462,10 +2503,7 @@ namespace jumpE_basic
                 Base.datas.Add(datas);
 
             }
-        }
-        public class raiseSA : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void raiseSA(List<string> code, Data D, base_runner Base)
             {
                 Data datas = new Data();
                 for (int i = 1; i < code.Count; i += 2)
@@ -2488,11 +2526,9 @@ namespace jumpE_basic
                 }
                 Base.datas.Add(datas);
             }
-        }
 
-        public class sideLayer : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+
+            public static void sideLayer(List<string> code, Data D, base_runner Base)
             {
                 //try
                 {
@@ -2511,10 +2547,7 @@ namespace jumpE_basic
                 //catch { Console.WriteLine("Error: 5, Sheet error, Line "+Base.position); }
 
             }
-        }
-        public class remL : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void remL(List<string> code, Data D, base_runner Base)
             {
                 //if (code[1] == "\"" && code[3] == "\"")
                 //{
@@ -2525,10 +2558,7 @@ namespace jumpE_basic
                     D.setsheet(code[1], D);
                 }
             }
-        }
-        public class callLayer : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void callLayer(List<string> code, Data D, base_runner Base)
             {
                 //if (code[1] == "\"" && code[3] == "\"")
                 //{
@@ -2544,10 +2574,7 @@ namespace jumpE_basic
                 }
                 //Console.WriteLine(D.sheets);
             }
-        }
-        public class bring : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void bring(List<string> code, Data D, base_runner Base)
             {
 
                 D.SuperSet(code[1], Base.datas[Base.datas.Count - 2].referenceVar(code[1]));
@@ -2555,18 +2582,12 @@ namespace jumpE_basic
 
                 //else { Console.WriteLine("Error: 7, unable to bring, Line "+Base.position); }
             }
-        }
-        public class bringA : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void bringA(List<string> code, Data D, base_runner Base)
             {
                 D.SuperSet(code[2], Base.datas[Base.datas.Count - 2].referenceVar(code[1]));
                 //else { Console.WriteLine("Error: 7, unable to bring, Line "+Base.position); }
             }
-        }
-        public class bringDL : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void bringDL(List<string> code, Data D, base_runner Base)
             {
                 //if (Base.datas[Base.datas.Count - 2].instring(code[1]))
                 //{
@@ -2578,32 +2599,23 @@ namespace jumpE_basic
                 //}
                 D.setsheet(code[2], Base.datas[Base.datas.Count - 2]);
             }
-        }
-        public class push : command_centrall
-        {
             //pre_defined_variable f = new pre_defined_variable();
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void push(List<string> code, Data D, base_runner Base)
             {
                 Base.datas[Base.datas.Count() - 2].SuperSet(code[1], D.referenceVar(code[1]));
                 //else { Console.WriteLine("Error: 8, unable to push, Line "+Base.position); }
                 //else if (D.isvar(code[1])) { Base.datas[Base.datas.Count - 1].se(code[1], D.referenceI(code[1])); }
 
             }
-        }
-        public class pushA : command_centrall
-        {
             //pre_defined_variable f = new pre_defined_variable();
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void pushA(List<string> code, Data D, base_runner Base)
             {
                 Base.datas[Base.datas.Count() - 2].SuperSet(code[2], D.referenceVar(code[1]));
                 //else { Console.WriteLine("Error: 8, unable to push, Line "+Base.position); }
                 //else if (D.isvar(code[1])) { Base.datas[Base.datas.Count - 1].se(code[1], D.referenceI(code[1])); }
 
             }
-        }
-        public class pushDL : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void pushDL(List<string> code, Data D, base_runner Base)
             {
                 //if (D.instring(code[1]))
                 //{
@@ -2615,10 +2627,7 @@ namespace jumpE_basic
                 //}
                 Base.datas[Base.datas.Count() - 2].setsheet(code[1], D);
             }
-        }
-        public class pop : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void pop(List<string> code, Data D, base_runner Base)
             {
                 //try
                 {
@@ -2626,19 +2635,7 @@ namespace jumpE_basic
                 }
                 //catch { Console.WriteLine("Error: 9, pop overflux, Line " + Base.position); }
             }
-        }
-        public class when : command_centrall
-        {
-            pre_defined_variable Math_equation;
-            CommandRegistry commands;
-            IDictionary<string, double> drict = new Dictionary<string, double>();
-            public when(pre_defined_variable j, CommandRegistry c)
-            {
-                this.Math_equation = j;
-                this.commands = c;
-
-            }
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void when(List<string> code, Data D, base_runner Base)
             {
 
                 bool ors = false;
@@ -2939,207 +2936,298 @@ namespace jumpE_basic
                     Console.WriteLine("Error: 10, logic statement error, Line "+ Base.position);
                 }*/
             }
-        }
 
-        public class useC : command_centrall
+
+        static int files_added = 0;
+        private static List<Assembly> _compiledAssemblies = new List<Assembly>();
+        public static void useC(List<string> code, Data D, base_runner Base)
         {
-            private CommandRegistry commandRegistry;
+            string filePath = Base.localPath + "\\" + code[1];
 
-            public useC(CommandRegistry a)
+            // Read the contents of the .cs file
+            string fileContent = File.ReadAllText(filePath);
+
+            string generatedCode = "using System;\r\nusing System.Linq;\r\nusing System.Text;\r\nusing System.IO;\r\nusing static System.Runtime.InteropServices.JavaScript.JSType;\r\n//using System.Windows;\r\nusing System.Collections;\r\nusing System.Collections.Generic;\r\nusing jumpE_basic;";
+            for (int d = 0; d < assemblynames.Count(); d++)
             {
-                this.commandRegistry = a;
+                generatedCode += "\nusing " + assemblynames[d] + ";";
             }
+            // Dynamic code generation with namespace
+            generatedCode = generatedCode + $@"
+    {fileContent}
+";
 
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            try
             {
-                if (code.Count >= 3)
+                // Compile the code using Roslyn
+                var compiledAssembly = CompileCode(generatedCode);
+
+                if (compiledAssembly == null)
                 {
-                    string filePath = Base.localPath + code[1];
-
-                    // Read the contents of the .cs file
-                    string fileContent = File.ReadAllText(filePath);
-
-                    // Dynamic code generation with namespace
-                    string generatedCode = $@"
-using System;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.IO;
-using System.Collections.Generic;
-namespace jumpE_basic 
-{{ 
-            {fileContent}
-}}";
-                    //Debug.WriteLine(generatedCode);
-                    try
-                    {
-                        // Compile the code using CodeDom
-                        CompilerResults compilerResults = CompileCode(generatedCode);
-
-                        if (compilerResults.Errors.HasErrors)
-                        {
-
-                            foreach (CompilerError error in compilerResults.Errors)
-                            {
-                                Debug.WriteLine(error.ErrorText);
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Failed to initialize imports: {ex.Message}");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Invalid number of parameters for the 'use' command.");
+                    Console.WriteLine("Compilation failed.");
                 }
             }
-
-            private CompilerResults CompileCode(string code)
+            catch (Exception ex)
             {
-                CSharpCodeProvider codeProvider = new CSharpCodeProvider();
-                CompilerParameters compilerParameters = new CompilerParameters
-                {
-                    GenerateInMemory = true,
-                    GenerateExecutable = false
-                };
-                //string assemblyNameD = "DATA_CONVERTER";
-
-                // Get the assembly by name
-                //Assembly assemblyD = Assembly.Load();
-
-                // Get the location (path) of the assembly
-                //string assemblyPathD = assemblyD.Location;
-
-
-
-
-                //compilerParameters.ReferencedAssemblies.Add(assemblyPathD);
-                //compilerParameters.ReferencedAssemblies.Add(@"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\PresentationFramework.dll");
-                return codeProvider.CompileAssemblyFromSource(compilerParameters, code);
-
+                Console.WriteLine($"Failed to initialize imports: {ex.Message}");
             }
         }
 
-
-        public class use : command_centrall
+        private static Assembly CompileCodeC(string code)
         {
-            private CommandRegistry commandRegistry;
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
-            public use(CommandRegistry a)
-            {
-                this.commandRegistry = a;
-            }
+            var references = new[]
+           {
+            MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(Console).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(jumpE_basic).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),          // System.Linq
+            MetadataReference.CreateFromFile(typeof(List<>).Assembly.Location),              // System.Collections.Generic
+            MetadataReference.CreateFromFile(typeof(File).Assembly.Location),                // System.IO
+            MetadataReference.CreateFromFile(typeof(Regex).Assembly.Location),               // System.Text.RegularExpressions
+            MetadataReference.CreateFromFile(typeof(Uri).Assembly.Location),                 // System for Uri handling
+            MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()        // Load additional assemblies dynamically
+            .FirstOrDefault(a => a.GetName().Name == "System.Runtime").Location),           // System.Runtime (important for .NET types)
+            // Add additional necessary assemblies here
+            };
 
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            var compilation = CSharpCompilation.Create(
+                "DynamicAssembly",
+                new[] { syntaxTree },
+                references,
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+            using (var ms = new MemoryStream())
             {
-                if (code.Count >= 3)
+                var result = compilation.Emit(ms);
+
+                if (!result.Success)
                 {
-                    string filePath = Base.localPath + code[1];
-                    string className = code[2];
+                    foreach (var diagnostic in result.Diagnostics)
+                    {
+                        Console.WriteLine(diagnostic.GetMessage());
+                    }
+                    return null;
+                }
 
-                    // Read the contents of the .cs file
-                    string fileContent = File.ReadAllText(filePath);
+                ms.Seek(0, SeekOrigin.Begin);
+                return Assembly.Load(ms.ToArray());
+            }
+        }
 
-                    // Dynamic code generation with namespace
-                    string generatedCode = $@"
-using System;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Windows;
-using System.Collections.Generic;
-namespace jumpE_basic  
+        public static void use(List<string> code, Data D, base_runner Base)
+        {
+            string filePath = Base.localPath + "\\" + code[1];
+            //Console.WriteLine(filePath+"\n");
+            // Read the contents of the .cs file
+            string fileContent = File.ReadAllText(filePath);
+            //Console.WriteLine(fileContent);
+            string generatedCode = "using System;\r\nusing System.Linq;\r\nusing System.Text;\r\nusing System.IO;\r\nusing static System.Runtime.InteropServices.JavaScript.JSType;\r\n//using System.Windows;\r\nusing System.Collections;\r\nusing System.Collections.Generic;\r\nusing jumpE_basic;";
+            for(int d = 0; d < assemblynames.Count(); d++)
+            {
+                generatedCode += "\nusing " + assemblynames[d] + ";";
+            }
+            // Dynamic code generation with namespace
+            generatedCode = generatedCode+ $@"
+namespace USEC
 {{ 
-    public class {className} : command_centrall
+    public class fle{files_added} : command_centralls
     {{ 
-        public override void Execute(List<string> code, Data D, base_runner Base)
+        public override void Execute(string[] code, Data D, base_runner Base)
         {{
             {fileContent}
         }}
     }} 
 }}";
-                    //Debug.WriteLine(generatedCode);
-                    try
+            //Console.WriteLine(generatedCode);
+            try
+            {
+                // Compile the code using Roslyn
+                var compiledAssembly = CompileCode(generatedCode);
+                //Console.WriteLine("Hello");
+                if (compiledAssembly != null)
+                {
+                    // Get the compiled type
+                    Type compiledType = compiledAssembly.GetType($"USEC.fle{files_added}");
+                    if (compiledType == null)
                     {
-                        // Compile the code using CodeDom
-                        CompilerResults compilerResults = CompileCode(generatedCode);
+                        Console.WriteLine("Failed to get compiled type.");
+                    }
+                    else
+                    {
 
-                        if (compilerResults.Errors.HasErrors)
+
+                        // Create an instance of the compiled class
+                        object initializedObject = Activator.CreateInstance(compiledType);
+
+                        if (initializedObject is command_centralls command)
                         {
-
-                            foreach (CompilerError error in compilerResults.Errors)
-                            {
-                                Debug.WriteLine(error.ErrorText);
-                            }
+                            command.Execute(code.ToArray(), D, Base);
                         }
                         else
                         {
-                            // Get the compiled type
-                            Type compiledType = compilerResults.CompiledAssembly.GetType($"Imported_commands.{className}");
-
-                            // Create an instance of the compiled class
-                            object initializedObject = Activator.CreateInstance(compiledType);
-
-                            // Check if the result is an instance of outer_commands
-                            if (initializedObject is command_centrall)
-                            {
-                                // Add the command to the commandRegistry
-                                ((command_centrall)initializedObject).Execute(code, D, Base);
-                                //this.commandRegistry.add_command(className, outerCommandsObject);
-                                //Debug.WriteLine(className);
-
-                            }
-                            else
-                            {
-                                Console.WriteLine($"Failed to create an instance of {className}.");
-                            }
+                            Console.WriteLine($"Failed to create an instance of fle{files_added}.");
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Failed to create an instance of {className}: {ex.Message}");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Invalid number of parameters for the 'use' command.");
                 }
             }
-
-            private CompilerResults CompileCode(string code)
+            catch (Exception ex)
             {
-                CSharpCodeProvider codeProvider = new CSharpCodeProvider();
-                CompilerParameters compilerParameters = new CompilerParameters
-                {
-                    GenerateInMemory = true,
-                    GenerateExecutable = false
-                };
-                //string assemblyNameD = "DATA_CONVERTER";
+                Console.WriteLine($"Failed to create an instance of fle{files_added}: {ex.Message}");
+            }
 
-                // Get the assembly by name
-                //Assembly assemblyD = Assembly.Load(assemblyNameD);
+            files_added++;
+        }
+        static int files_addeds = 0;
+        //static List<byte[]> _compiledAssemblyBytes = new List<byte[]>();
+        static List<string> assemblynames = new List<string>();
+        private static List<string> _compiledAssemblyFiles = new List<string>();
 
-                // Get the location (path) of the assembly
-                //string assemblyPathD = assemblyD.Location;
-
-
-
-
-                //compilerParameters.ReferencedAssemblies.Add(assemblyPathD);
-                //compilerParameters.ReferencedAssemblies.Add(@"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\PresentationFramework.dll");
-                return codeProvider.CompileAssemblyFromSource(compilerParameters, code);
-
+        // Method to load previously compiled files dynamically
+        public static Assembly LoadCompiledDll(string dllFileName)
+        {
+            // Check if the file exists
+            if (File.Exists(dllFileName))
+            {
+                // Load the assembly from the file
+                return Assembly.LoadFrom(dllFileName);
+            }
+            else
+            {
+                Console.WriteLine($"Error: File {dllFileName} does not exist.");
+                return null;
             }
         }
-        public class listFunc : command_centrall
+
+        private static Assembly CompileCode(string code)
         {
-            private CommandRegistry commandRegistry;
+            string dllFileName = $"{currentPath}\\file{files_addeds}.dll";
+            //Console.WriteLine(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+
+            var references = new List<MetadataReference>()
+            {
+            MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(Console).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(jumpE_basic).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),          // System.Linq             // System.Collections.Generic
+            MetadataReference.CreateFromFile(typeof(File).Assembly.Location),                // System.IO
+            MetadataReference.CreateFromFile(typeof(Regex).Assembly.Location),               // System.Text.RegularExpressions
+            MetadataReference.CreateFromFile(typeof(Uri).Assembly.Location),                 // System for Uri handling
+            
+            };
+            // System.Runtime (important for .NET types)
+            // Add additional necessary assemblies here
+            references.Add(MetadataReference.CreateFromFile(typeof(List<>).Assembly.Location));
+            references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()        // Load additional assemblies dynamically
+            .FirstOrDefault(a => a.GetName().Name == "System.Runtime").Location));
+            references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()
+                .FirstOrDefault(a => a.GetName().Name == "System.Collections").Location));
+            //references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()
+            //                   .FirstOrDefault(a => a.GetName().Name == "System.Collections.Generic").Location));
+            references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()
+                .FirstOrDefault(a => a.GetName().Name == "System.Linq").Location));
+            references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()
+                .FirstOrDefault(a => a.GetName().Name == "System.Runtime.InteropServices.JavaScript").Location));
+
+            //references.AddRange(_compiledAssemblies.Select(assembly => CompilationReference.CreateFromImage(assembly.Location.)));
+            //references.AddRange(_compiledAssemblyBytes.Select(bytes => CompilationReference.CreateFromImage(bytes)));
+
+            foreach (var file in _compiledAssemblyFiles)
+            {
+                references.Add(MetadataReference.CreateFromFile(file));
+            }
 
 
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            //Console.WriteLine(references.Count());
+            var compilation = CSharpCompilation.Create(
+                "file"+files_addeds,
+                new[] { syntaxTree },
+                references,
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+            //Console.WriteLine("hello");
+            /*
+            using (var ms = new MemoryStream())
+            {
+               
+                var result = compilation.Emit(ms);
+                Console.WriteLine("hello");
+                if (!result.Success)
+                {
+                    foreach (var diagnostic in result.Diagnostics)
+                    {
+                        Console.WriteLine("error");
+                        Console.WriteLine(diagnostic.GetMessage());
+                    }
+                    return null;
+                }
+
+                ms.Seek(0, SeekOrigin.Begin);
+                var assemnlybytes = ms.ToArray();
+                
+                _compiledAssemblyBytes.Add(assemnlybytes);
+                //for(int i = 0; i < assemnlybytes.Length; i++)
+                //{
+                //    Console.Write(assemnlybytes[i] + " | ");
+                //    if(i%10 == 0)
+                //    {
+                //        Console.WriteLine();
+                //    }
+                //}
+                var assembly = Assembly.Load(ms.ToArray());
+                //_compiledAssemblies.Add(assembly);  // Store the compiled assembly for later use
+                Console.WriteLine(assembly);
+                List<string> names = GetNamespaces(assembly);
+
+                for(int i = 0; i < names.Count(); i++)
+                {
+                    assemblynames.Add(names[i]);
+                    Console.WriteLine(names[i]);
+                }
+                files_addeds++;
+                return assembly;
+
+            }
+            */
+            var result = compilation.Emit(dllFileName);
+            if (!result.Success)
+            {
+                // Output errors if compilation fails
+                foreach (var diagnostic in result.Diagnostics)
+                {
+                    Console.WriteLine(diagnostic.GetMessage());
+                }
+                return null;
+            }
+
+            // Load the compiled assembly from the DLL file
+            var assembly = Assembly.LoadFrom(dllFileName);
+
+            // Store the file path for future references
+            _compiledAssemblyFiles.Add(dllFileName);
+
+            // Increment the file counter
+            files_addeds++;
+
+            return assembly;
+        }
+        public static List<string> GetNamespaces(Assembly assembly)
+        {
+            // Get all types from the assembly
+            var types = assembly.GetTypes();
+
+            // Extract unique namespaces
+            var namespaces = types
+                .Where(t => !string.IsNullOrEmpty(t.Namespace))  // Exclude null/empty namespaces
+                .Select(t => t.Namespace)
+                .Distinct()  // Remove duplicates
+                .ToList();
+
+            return namespaces;
+        }
+
+        public static void listFunc(List<string> code, Data D, base_runner Base)
             {
                 try
                 {
@@ -3237,7 +3325,7 @@ namespace jumpE_basic
                                 l.add((list)D.referenceVar(strings[i][0]));
                             }
                         }
-                        else if (D.custtype.Contains(code[2]))
+                        else if (Data.custtype.Contains(code[2]))
                         {
                             for (int i = 0; i < strings.Count(); i++)
                             {
@@ -3261,7 +3349,6 @@ namespace jumpE_basic
                     Console.WriteLine("Initialization error");
                 }
             }
-        }
         //public class inputD : command_centrall
         //{
         //    public override void Execute(List<string> code, Data D, base_runner Base)
@@ -3560,9 +3647,8 @@ namespace jumpE_basic
         //    }
         //}
 
-        public class File_func : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+
+            public static void File_func(List<string> code, Data D, base_runner Base)
             {
                 if (code.Count() == 3)
                 {
@@ -3585,7 +3671,6 @@ namespace jumpE_basic
                     //}
                 }
             }
-        }
 
 
 
@@ -3594,10 +3679,8 @@ namespace jumpE_basic
 
 
 
-        public class pre_defined_variable : command_centrall
-        {
-            IDictionary<string, double> drict = new Dictionary<string, double>();
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            
+            public static void Pre_defined(List<string> code, Data D, base_runner Base)
             {
 
                 //if (D.inint(code[0]))
@@ -3999,7 +4082,7 @@ namespace jumpE_basic
                                 ((list)D.referenceVar(code[0])).add((list)D.referenceVar(code[2]));
                                 break;
                             default:
-                                if (D.custtype.Contains((((list)D.referenceVar(code[0])).t)))
+                                if (Data.custtype.Contains((((list)D.referenceVar(code[0])).t)))
                                 {
                                     ((list)D.referenceVar(code[0])).add(D.referenceCustom(((list)D.referenceVar(code[0])).t, code[2]));
                                 }
@@ -4178,7 +4261,7 @@ namespace jumpE_basic
                                 string typess = D.custtypeofkey(code[0]);
                                 if (typess != "Null")
                                 {
-                                    ((list)D.referenceVar(code[0])).set(index, Base.commandRegistry.listsaaa[typess](code, D, Base));
+                                    ((list)D.referenceVar(code[0])).set(index, CommandRegistry.listsaaa[typess](code, D, Base));
                                 }
                                 break;
 
@@ -4191,11 +4274,10 @@ namespace jumpE_basic
                 if(D.custtypeofkey(code[0]) != "Null")
                 {
                     string typess = D.custtypeofkey(code[0]);
-                    Base.commandRegistry.seters[typess](code, D, Base);
+                    CommandRegistry.seters[typess](code, D, Base);
                 }
 
             }
-        }
         //public class string_func : command_centrall
         //{
         //    //pre_defined_variable varlee;
@@ -4311,27 +4393,23 @@ namespace jumpE_basic
         //        }
         //    }
         //}
-        public class end : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void end(List<string> code, Data D, base_runner Base)
             {
                 Data DD = Base.datas[0];
                 Base.datas.Clear();
                 Base.datas.Add(DD);
                 Base.STOP();
+            
             }
-        }
-        public class return_func : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void return_func(List<string> code, Data D, base_runner Base)
+            {
+            if (Base.positions.Count > 1)
             {
                 Base.changePosition(Base.positions[Base.positions.Count - 1]);
                 Base.positions.RemoveAt(Base.positions.Count - 1);
             }
-        }
-        public class jump : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            }
+            public static void jump(List<string> code, Data D, base_runner Base)
             {
                 try
                 {
@@ -4370,7 +4448,6 @@ namespace jumpE_basic
                 }
 
             }
-        }
         //public class line_number : command_centrall
         //{
         //    public override void Execute(List<string> code, Data D, base_runner Base)
@@ -4437,9 +4514,7 @@ namespace jumpE_basic
         }*/
 
 
-        public class set_Return : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void set_Return(List<string> code, Data D, base_runner Base)
             {
                 //if (D.inint(code[1]))
                 //{
@@ -4482,10 +4557,7 @@ namespace jumpE_basic
                     Base.return_value = D.referenceCustom(D.custtypeofkey(code[1]), code[1]);
                 }
             }
-        }
-        public class Method_instantiate : command_centrall
-        {
-            public override void Execute(List<string> code, Data D, base_runner Base)
+            public static void Method_instantiate(List<string> code, Data D, base_runner Base)
             {
                 int w = 0;
                 int q = Base.position + 1;
@@ -4522,7 +4594,6 @@ namespace jumpE_basic
                 D.setMethod(code[1], args.ToArray(), t, lists);
 
             }
-        }
         
         public static Type getType(string type)
         {
@@ -4995,7 +5066,7 @@ namespace jumpE_basic
         }
 
 
-
+         
         public static double doMath(string[] equation, Data D, base_runner Base)
         {
             string equationa = "";
