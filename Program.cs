@@ -1619,6 +1619,7 @@ namespace jumpE_basic
                         data = datas;
                         Console.WriteLine("CLEAR");
                         base_runner.hard_stop = false;
+                        CleanupCompiledDlls();
                     }
                 }
                 else if (hell == "debug")
@@ -1776,6 +1777,7 @@ namespace jumpE_basic
                 }
 
             }
+            CleanupCompiledDlls();
 
         }
     }
