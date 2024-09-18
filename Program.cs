@@ -3118,8 +3118,23 @@ namespace USEC
         //static List<byte[]> _compiledAssemblyBytes = new List<byte[]>();
         static List<string> assemblynames = new List<string>();
         private static List<string> _compiledAssemblyFiles = new List<string>();
+        private static List<string> _dynamicly_compiled = new List<string>();
 
         // Method to load previously compiled files dynamically
+        public static void CleanupCompiledDlls()
+        {
+            foreach (var file in _dynamicly_compiled)
+            {
+                if (File.Exists(file))
+                {
+                    File.Delete(file);
+                }
+            }
+            _compiledAssemblyFiles.Clear();
+        }
+
+
+
         public static Assembly LoadCompiledDll(string dllFileName)
         {
             // Check if the file exists
@@ -3244,7 +3259,7 @@ namespace USEC
 
             // Store the file path for future references
             _compiledAssemblyFiles.Add(dllFileName);
-
+            _dynamicly_compiled.Add(dllFileName);
             // Increment the file counter
             files_addeds++;
 
