@@ -365,16 +365,27 @@ namespace jumpE_basic
                 type = "UNIQ";
             else if (obj.GetType() == typeof(Method))
                 type = "method";
+            else
+            {
+                if (obj is CustTypeName)
+                {
+                    type = ((CustTypeName)obj).name();
+                }
+            }
 
 
             return type;
         }
     }
-    public class list : JEnumeral , CustTypeName
+    public class list : JEnumeral , CustTypeName, Valued
     {
         public string name()
         {
             return "list";
+        }
+        public object getV()
+        {
+            return stuff;
         }
         public string t;
         List<object> stuff;
@@ -561,6 +572,12 @@ namespace jumpE_basic
                             }
                         }
                     }
+                    if (l1.size() > l2.size())
+                    {
+                        return true;
+                    }
+                    break;
+                default:
                     if (l1.size() > l2.size())
                     {
                         return true;
@@ -836,10 +853,11 @@ namespace jumpE_basic
             //}
             foreach(string ss in custtype)
             {
-                foreach (var kvp in custom_types[ss])
-                {
-                    mama += kvp.Key + "=" + kvp.Value + ":" + ss + "|\n";
-                }
+                if(custom_types.ContainsKey(ss))
+                    foreach (var kvp in custom_types[ss])
+                    {
+                        mama += kvp.Key + "=" + kvp.Value + ":" + ss + "|\n";
+                    }
             }
             //foreach (var kvp in lines)
             //{
@@ -1074,6 +1092,7 @@ namespace jumpE_basic
             {
                 return sheets[key];
             }
+            
             //else if (lines.ContainsKey(key))
             //{
             //    return lines[key];
@@ -1621,18 +1640,18 @@ namespace jumpE_basic
                         string hells = Console.ReadLine();
                         string fileName = @"" + hells;
                         //Console.WriteLine(Path.GetDirectoryName(hells));
-                        var timer = new Stopwatch();
-                        timer.Start();
+                        //var timer = new Stopwatch();
+                        //timer.Start();
                         using (StreamReader streamReader = File.OpenText(fileName))
                         {
                             string text = streamReader.ReadToEnd();
                             base_runner bases = new base_runner(text, data, Path.GetDirectoryName(hells));
                         }
-                        timer.Stop();
+                        //timer.Stop();
 
-                        TimeSpan timeTaken = timer.Elapsed;
-                        string foo = "Time taken: " + timeTaken.ToString(@"m\:ss\.fff");
-                        Console.WriteLine(foo);
+                        //TimeSpan timeTaken = timer.Elapsed;
+                        //string foo = "Time taken: " + timeTaken.ToString(@"m\:ss\.fff");
+                        //Console.WriteLine(foo);
                     }
                     catch (Exception e)
                     {
@@ -1780,6 +1799,7 @@ namespace jumpE_basic
         //private new pre_defined_variable f = new pre_defined_variable();
         public string localPath = "";
         public static string currentPath = "";
+        
         public static Dictionary<string, Func<string[], Data, base_runner, int, int, string[]>> Mathss = new Dictionary<string, Func<string[], Data, base_runner, int, int, string[]>>() { { "!L!", getfromlist }, { "!M!", getfrommethod }, { "!S!", spawningspace } };
         public base_runner(string taken, Data data, string localPath)
         {
@@ -1983,7 +2003,9 @@ namespace jumpE_basic
                 { "HS" , Hard_stop },
                 { "save" , save },
                 { "method" , Method_instantiate },
-                { "<><" , set_Return }
+                { "<><" , set_Return },
+                { "list" , listFunc },
+                { "useDC" , useDC }
 
                 
 
@@ -2207,7 +2229,7 @@ namespace jumpE_basic
                 {
                     //int color = 15;
                     string Message = "";
-
+                
                     for (int i = 1; i < code.Count; i++)
                     {
                         if (code[i] == "\\Clear")
@@ -2940,13 +2962,26 @@ namespace jumpE_basic
 
         static int files_added = 0;
         private static List<Assembly> _compiledAssemblies = new List<Assembly>();
+        public static void useDC(List<string> code, Data D, base_runner Base)
+        {
+            string filePath = Base.localPath + "\\" + code[1]+".dll";
+            // add the assembly name to the list
+            assemblynames.Add(code[1]);
+            //var assembly = LoadCompiledDll(filePath);
+            //if (assembly != null)
+            {
+                _compiledAssemblyFiles.Add(filePath);
+            }
+
+            
+        }
         public static void useC(List<string> code, Data D, base_runner Base)
         {
             string filePath = Base.localPath + "\\" + code[1];
 
             // Read the contents of the .cs file
             string fileContent = File.ReadAllText(filePath);
-
+            
             string generatedCode = "using System;\r\nusing System.Linq;\r\nusing System.Text;\r\nusing System.IO;\r\nusing static System.Runtime.InteropServices.JavaScript.JSType;\r\n//using System.Windows;\r\nusing System.Collections;\r\nusing System.Collections.Generic;\r\nusing jumpE_basic;";
             for (int d = 0; d < assemblynames.Count(); d++)
             {
@@ -3056,7 +3091,7 @@ namespace USEC
                     }
                     else
                     {
-
+                
 
                         // Create an instance of the compiled class
                         object initializedObject = Activator.CreateInstance(compiledType);
@@ -3110,6 +3145,7 @@ namespace USEC
             {
             MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(Console).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(File).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(jumpE_basic).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),          // System.Linq             // System.Collections.Generic
             MetadataReference.CreateFromFile(typeof(File).Assembly.Location),                // System.IO
@@ -3128,12 +3164,14 @@ namespace USEC
             //                   .FirstOrDefault(a => a.GetName().Name == "System.Collections.Generic").Location));
             references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()
                 .FirstOrDefault(a => a.GetName().Name == "System.Linq").Location));
+            //references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()
+            //    .FirstOrDefault(a => a.GetName().Name == "System.IO").Location));
             references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()
                 .FirstOrDefault(a => a.GetName().Name == "System.Runtime.InteropServices.JavaScript").Location));
 
             //references.AddRange(_compiledAssemblies.Select(assembly => CompilationReference.CreateFromImage(assembly.Location.)));
             //references.AddRange(_compiledAssemblyBytes.Select(bytes => CompilationReference.CreateFromImage(bytes)));
-
+            
             foreach (var file in _compiledAssemblyFiles)
             {
                 references.Add(MetadataReference.CreateFromFile(file));
@@ -3254,6 +3292,7 @@ namespace USEC
                                 codes.Add(code[i]);
                             }
                         }
+                        strings.Add(codes);
                         //if (code[2] == "int")
                         //{
                         //    for (int i = 0; i < strings.Count(); i++)
