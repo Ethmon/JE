@@ -998,6 +998,7 @@ namespace jumpE_basic
             //}
             //return false;
         }
+
         //public bool inint(string key)
         //{
         //    if (integers.ContainsKey(key))
@@ -2477,6 +2478,7 @@ namespace jumpE_basic
                     Base.commandRegistry.commands.Remove(code[1]);
 
                 }*/
+                
                 if (D.isvar(code[1]))
                 {
                     D.SuperRemove(code[1]);
