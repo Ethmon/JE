@@ -330,6 +330,7 @@ namespace jumpE_basic
         }
 
     }
+
     public interface JEnumeral
     {
         void add(object obj);
@@ -1588,7 +1589,7 @@ namespace jumpE_basic
             bool run = true;
             bool clear_lock = false;
             double floatingvar = 0;
-            string version = "0.2.3";
+            string version = "1.0.0";
             //data.setI("LNT", 0);
             while (run)
             {
