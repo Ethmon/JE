@@ -1799,6 +1799,7 @@ namespace jumpE_basic
                     }
                 }
 
+
                 else
                 {
                     //Console.WriteLine("NOT A COMMAND");
@@ -2657,6 +2658,10 @@ namespace jumpE_basic
             //pre_defined_variable f = new pre_defined_variable();
             public static void push(List<string> code, Data D, base_runner Base)
             {
+            if (code.Count() == 3)
+            {
+                Base.datas[Base.datas.Count() - 2].setCustom(code[2], code[1], D.referenceVar(code[1])); return;
+            }
                 Base.datas[Base.datas.Count() - 2].SuperSet(code[1], D.referenceVar(code[1]));
                 //else { Console.WriteLine("Error: 8, unable to push, Line "+Base.position); }
                 //else if (D.isvar(code[1])) { Base.datas[Base.datas.Count - 1].se(code[1], D.referenceI(code[1])); }
@@ -2665,6 +2670,10 @@ namespace jumpE_basic
             //pre_defined_variable f = new pre_defined_variable();
             public static void pushA(List<string> code, Data D, base_runner Base)
             {
+            if (code.Count() == 4)
+            {
+                Base.datas[Base.datas.Count() - 2].setCustom(code[4], code[2], D.referenceVar(code[1])); return;
+            }
                 Base.datas[Base.datas.Count() - 2].SuperSet(code[2], D.referenceVar(code[1]));
                 //else { Console.WriteLine("Error: 8, unable to push, Line "+Base.position); }
                 //else if (D.isvar(code[1])) { Base.datas[Base.datas.Count - 1].se(code[1], D.referenceI(code[1])); }
