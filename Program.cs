@@ -225,8 +225,12 @@ namespace jumpE_basic
     {
         public object getV();
     }
-    public class UNIQ
+    public class UNIQ : CustTypeName
     {
+        public string name()
+        {
+            return "UNIQ";
+        }
         string code;
         Dictionary<string, Method> methods = new Dictionary<string, Method>();
         Data data = new Data();
@@ -246,8 +250,12 @@ namespace jumpE_basic
 
     }
 
-    public class Method
+    public class  Method : CustTypeName
     {
+        public string name()
+        {
+            return "Method";
+        }
         // ading in a true methods to the language
         public string[] code;
         public Type ty;
@@ -632,6 +640,15 @@ namespace jumpE_basic
     public class Data
     {
         public ISet<string> keys = new HashSet<string>();
+        public static Dictionary<string, Type> custtypeTypes = new Dictionary<string, Type>()
+        {
+            { "list",typeof(list)},
+            { "JFile", typeof(JFile) },
+            { "UNIQ", typeof(UNIQ)},
+            { "Method", typeof(Method)}
+
+
+        };
         public static ISet<string> custtype = new HashSet<string>();
         //Dictionary<string, string> strings = new Dictionary<string, string>();
         //Dictionary<string, double> doubles = new Dictionary<string, double>();
@@ -650,6 +667,14 @@ namespace jumpE_basic
 
         }
 
+        public static Type custtypeofType(string type)
+        {
+            if (custtypeTypes.ContainsKey(type))
+            {
+                return custtypeTypes[type];
+            }
+            return null;
+        }
         //Dictionary<string, Dictionary<string, Object>> custom_types = new Dictionary<string, Dictionary<string, Object>>();
         public double identifier = 0;
         public double typeidentifier = 0;
@@ -742,10 +767,11 @@ namespace jumpE_basic
             d.files = new Dictionary<string, JFile>(files);
             return d;
         }
-        public static void add_custtype(string type)
+        public static void add_custtype(string type,Type actualtype)
         {
             custtype.Add(type);
             //custom_types.Add(type, new Dictionary<string, object>());
+            custtypeTypes.Add(type, actualtype);
         }
         public void SaveToFile(string filePath)
         {
