@@ -1615,7 +1615,7 @@ namespace jumpE_basic
             bool run = true;
             bool clear_lock = false;
             double floatingvar = 0;
-            string version = "1.0.0";
+            string version = "1.0.5";
             //data.setI("LNT", 0);
             while (run)
             {
@@ -2614,11 +2614,11 @@ namespace jumpE_basic
             }
             public static void callLayer(List<string> code, Data D, base_runner Base)
             {
-            if ((code[1] == "\"" && code[3] == "\"") && D.referenceVar(code[2]) is Valued)
-            {
+                if ((code[1] == "\"" && code[3] == "\"") && D.referenceVar(code[2]) is Valued)
+                {
                     Base.datas.Add(D.referenceSheet(((Valued)D.referenceVar(code[2])).getV().ToString()));
                 }
-                if (D.issheet(code[1]))
+                else if (D.issheet(code[1]))
                 {
                     Base.datas.Add(D.referenceSheet(code[1]));
                 }
@@ -2766,22 +2766,22 @@ namespace jumpE_basic
                             {
                                 a = ((Number)D.referenceCustom(D.custtypeofkey(code[2]), code[2])).get_value();
                             }
-                            if (D.issheet(statments[iff][2]))
+                            else if (D.issheet(statments[iff][2]))
                             {
                                 a = D.referenceSheet(statments[iff][2]).typeidentifier;
                             }
-                            //else if (D.instring(statments[iff][2]))
-                            //{
-                            //    if (D.issheet(D.referenceS(statments[iff][2]) + "#"))
-                            //    {
-                            //        a = D.referenceSheet(D.referenceS(statments[iff][2]) + "#").typeidentifier;
-                            //    }
-                            //}
+                            else if (D.referenceVar(statments[iff][2]) is Valued)
+                            {
+                                if (D.issheet(((Valued)D.referenceVar(statments[iff][2])).getV().ToString()))
+                                {
+                                    a = D.referenceSheet(((Valued)D.referenceVar(statments[iff][2])).getV().ToString()).typeidentifier;
+                                }
+                            }
                             else if (double.TryParse(statments[iff][2], out double ad))
                             {
                                 a = ad;
                             }
-                            if (((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[2]), code[2]) is Number : false))
+                            else if (((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[2]), code[2]) is Number : false))
                             {
                                 a = ((Number)D.referenceCustom(D.custtypeofkey(code[2]), code[2])).get_value();
                             }
@@ -2789,13 +2789,13 @@ namespace jumpE_basic
                             {
                                 b = D.referenceSheet(statments[iff][3]).typeidentifier;
                             }
-                            //else if (D.instring(statments[iff][3]))
-                            //{
-                            //    if (D.issheet(D.referenceS(statments[iff][3]) + "#"))
-                            //    {
-                            //        b = D.referenceSheet(D.referenceS(statments[iff][3]) + "#").typeidentifier;
-                            //    }
-                            //}
+                            else if (D.referenceVar(statments[iff][3]) is Valued)
+                            {
+                                if (D.issheet(((Valued)D.referenceVar(statments[iff][3])).getV().ToString()))
+                                {
+                                    b = D.referenceSheet(((Valued)D.referenceVar(statments[iff][3])).getV().ToString()).typeidentifier;
+                                }
+                            }
                             else if (double.TryParse(statments[iff][3], out double bd))
                             {
                                 b = bd;
@@ -4490,10 +4490,10 @@ namespace USEC
             }
             public static void return_func(List<string> code, Data D, base_runner Base)
             {
-            if (Base.positions.Count > 1)
+            if (Base.positions.Count >= 1)
             {
-                Base.changePosition(Base.positions[Base.positions.Count - 1]);
-                Base.positions.RemoveAt(Base.positions.Count - 1);
+                Base.changePosition(Base.positions[Base.positions.Count() - 1]);
+                Base.positions.RemoveAt(Base.positions.Count() - 1);
             }
             }
             public static void jump(List<string> code, Data D, base_runner Base)
