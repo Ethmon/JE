@@ -2587,11 +2587,12 @@ namespace jumpE_basic
                 {
                     Data data = new Data();
 
-                    //if (code[1] == "\"" && code[3] == "\"")
-                    //{
-                    //    D.setsheet(D.referenceS(code[2]) + "#", data);
-                    //}
-                    //else
+                    if ((code[1] == "\"" && code[3] == "\"") && D.referenceVar(code[2]) is Valued)
+                    {
+                    
+                        D.setsheet(((Valued)D.referenceVar(code[2])).getV().ToString(), data);
+                    }
+                    else
                     {
                         D.setsheet(code[1], data);
                     }
@@ -2602,21 +2603,21 @@ namespace jumpE_basic
             }
             public static void remL(List<string> code, Data D, base_runner Base)
             {
-                //if (code[1] == "\"" && code[3] == "\"")
-                //{
-                //    D.setsheet(D.referenceS(code[2]) + "#", D);
-                //}
-                //else
+            if ((code[1] == "\"" && code[3] == "\"") && D.referenceVar(code[2]) is Valued)
+            {
+                    D.setsheet(((Valued)D.referenceVar(code[2])).getV().ToString(), D);
+                }
+                else
                 {
                     D.setsheet(code[1], D);
                 }
             }
             public static void callLayer(List<string> code, Data D, base_runner Base)
             {
-                //if (code[1] == "\"" && code[3] == "\"")
-                //{
-                //    Base.datas.Add(D.referenceSheet(D.referenceS(code[2]) + "#"));
-                //}
+            if ((code[1] == "\"" && code[3] == "\"") && D.referenceVar(code[2]) is Valued)
+            {
+                    Base.datas.Add(D.referenceSheet(((Valued)D.referenceVar(code[2])).getV().ToString()));
+                }
                 if (D.issheet(code[1]))
                 {
                     Base.datas.Add(D.referenceSheet(code[1]));
@@ -2650,6 +2651,7 @@ namespace jumpE_basic
                 //        return;
                 //    }
                 //}
+                
                 D.setsheet(code[2], Base.datas[Base.datas.Count - 2]);
             }
             //pre_defined_variable f = new pre_defined_variable();
