@@ -667,7 +667,7 @@ namespace jumpE_basic
 
         }
 
-        public static Type custtypeofType(string type)
+        public Type custtypeofType(string type)
         {
             if (custtypeTypes.ContainsKey(type))
             {
@@ -4980,6 +4980,25 @@ namespace USEC
                     _ => throw new Exception("Unknown operator")
                 };
             }
+            public override bool EvaluateBoolean()
+            {
+                double leftValue = left.Evaluate();
+                double rightValue = right.Evaluate();
+
+                return op switch
+                {
+                    "&&" => leftValue != 0 && rightValue != 0,
+                    "||" => leftValue != 0 || rightValue != 0,
+                    "==" => leftValue == rightValue,
+                    "<" => leftValue < rightValue,
+                    ">" => leftValue > rightValue,
+                    "<=" => leftValue <= rightValue,
+                    ">=" => leftValue >= rightValue,
+                    "!=" => leftValue != rightValue,
+                    _ => throw new Exception("Unknown operator")
+                };
+            }
+
         }
 
         // Node for unary operations
