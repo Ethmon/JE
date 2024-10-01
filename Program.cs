@@ -4808,7 +4808,7 @@ namespace USEC
         // Tokenizer class for breaking expressions into tokens
         public class Math_Tokenizer
         {
-            private static readonly Regex tokenPattern = new Regex(@"\d+|true|false|\+|\-|\*|\/|\%|\(|\)|&&|\|\||!|<=|>=|<|>|==|[^\s]+");
+            private static readonly Regex tokenPattern = new Regex(@"\d+|true|false|\+|\-|\*|\/|\%|\(|\)|&&|\|\||<=|>=|<|>|==|!=|[^\s]+");
 
             public static List<Token> Tokenize(string expression)
             {
@@ -5033,7 +5033,7 @@ namespace USEC
     {
         { "||", 1 },
         { "&&", 2 },
-        { "==", 3 }, { "<", 3 }, { ">", 3 }, { "<=", 3 }, { ">=", 3 },
+        { "==", 3 }, { "<", 3 }, { ">", 3 }, { "<=", 3 }, { ">=", 3 }, {"!=",3 },
         { "+", 4 }, { "-", 4 },
         { "*", 5 }, { "/", 5 }, { "%", 5 },
         { "!", 6 }
