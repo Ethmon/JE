@@ -225,8 +225,12 @@ namespace jumpE_basic
     {
         public object getV();
     }
-    public class UNIQ
+    public class UNIQ : CustTypeName
     {
+        public string name()
+        {
+            return "UNIQ";
+        }
         string code;
         Dictionary<string, Method> methods = new Dictionary<string, Method>();
         Data data = new Data();
@@ -246,8 +250,12 @@ namespace jumpE_basic
 
     }
 
-    public class Method
+    public class  Method : CustTypeName
     {
+        public string name()
+        {
+            return "Method";
+        }
         // ading in a true methods to the language
         public string[] code;
         public Type ty;
@@ -330,6 +338,7 @@ namespace jumpE_basic
         }
 
     }
+
     public interface JEnumeral
     {
         void add(object obj);
@@ -631,6 +640,15 @@ namespace jumpE_basic
     public class Data
     {
         public ISet<string> keys = new HashSet<string>();
+        public static Dictionary<string, Type> custtypeTypes = new Dictionary<string, Type>()
+        {
+            { "list",typeof(list)},
+            { "JFile", typeof(JFile) },
+            { "UNIQ", typeof(UNIQ)},
+            { "Method", typeof(Method)}
+
+
+        };
         public static ISet<string> custtype = new HashSet<string>();
         //Dictionary<string, string> strings = new Dictionary<string, string>();
         //Dictionary<string, double> doubles = new Dictionary<string, double>();
@@ -649,6 +667,14 @@ namespace jumpE_basic
 
         }
 
+        public Type custtypeofType(string type)
+        {
+            if (custtypeTypes.ContainsKey(type))
+            {
+                return custtypeTypes[type];
+            }
+            return null;
+        }
         //Dictionary<string, Dictionary<string, Object>> custom_types = new Dictionary<string, Dictionary<string, Object>>();
         public double identifier = 0;
         public double typeidentifier = 0;
@@ -741,10 +767,11 @@ namespace jumpE_basic
             d.files = new Dictionary<string, JFile>(files);
             return d;
         }
-        public static void add_custtype(string type)
+        public static void add_custtype(string type,Type actualtype)
         {
             custtype.Add(type);
             //custom_types.Add(type, new Dictionary<string, object>());
+            custtypeTypes.Add(type, actualtype);
         }
         public void SaveToFile(string filePath)
         {
@@ -998,6 +1025,7 @@ namespace jumpE_basic
             //}
             //return false;
         }
+
         //public bool inint(string key)
         //{
         //    if (integers.ContainsKey(key))
@@ -1587,7 +1615,7 @@ namespace jumpE_basic
             bool run = true;
             bool clear_lock = false;
             double floatingvar = 0;
-            string version = "0.2.3";
+            string version = "1.0.5";
             //data.setI("LNT", 0);
             while (run)
             {
@@ -1770,6 +1798,7 @@ namespace jumpE_basic
                         Console.WriteLine(e);
                     }
                 }
+
 
                 else
                 {
@@ -2479,6 +2508,7 @@ namespace jumpE_basic
                     Base.commandRegistry.commands.Remove(code[1]);
 
                 }*/
+                
                 if (D.isvar(code[1]))
                 {
                     D.SuperRemove(code[1]);
@@ -2558,11 +2588,12 @@ namespace jumpE_basic
                 {
                     Data data = new Data();
 
-                    //if (code[1] == "\"" && code[3] == "\"")
-                    //{
-                    //    D.setsheet(D.referenceS(code[2]) + "#", data);
-                    //}
-                    //else
+                    if ((code[1] == "\"" && code[3] == "\"") && D.referenceVar(code[2]) is Valued)
+                    {
+                    
+                        D.setsheet(((Valued)D.referenceVar(code[2])).getV().ToString(), data);
+                    }
+                    else
                     {
                         D.setsheet(code[1], data);
                     }
@@ -2573,22 +2604,22 @@ namespace jumpE_basic
             }
             public static void remL(List<string> code, Data D, base_runner Base)
             {
-                //if (code[1] == "\"" && code[3] == "\"")
-                //{
-                //    D.setsheet(D.referenceS(code[2]) + "#", D);
-                //}
-                //else
+            if ((code[1] == "\"" && code[3] == "\"") && D.referenceVar(code[2]) is Valued)
+            {
+                    D.setsheet(((Valued)D.referenceVar(code[2])).getV().ToString(), D);
+                }
+                else
                 {
                     D.setsheet(code[1], D);
                 }
             }
             public static void callLayer(List<string> code, Data D, base_runner Base)
             {
-                //if (code[1] == "\"" && code[3] == "\"")
-                //{
-                //    Base.datas.Add(D.referenceSheet(D.referenceS(code[2]) + "#"));
-                //}
-                if (D.issheet(code[1]))
+                if ((code[1] == "\"" && code[3] == "\"") && D.referenceVar(code[2]) is Valued)
+                {
+                    Base.datas.Add(D.referenceSheet(((Valued)D.referenceVar(code[2])).getV().ToString()));
+                }
+                else if (D.issheet(code[1]))
                 {
                     Base.datas.Add(D.referenceSheet(code[1]));
                 }
@@ -2621,11 +2652,16 @@ namespace jumpE_basic
                 //        return;
                 //    }
                 //}
+                
                 D.setsheet(code[2], Base.datas[Base.datas.Count - 2]);
             }
             //pre_defined_variable f = new pre_defined_variable();
             public static void push(List<string> code, Data D, base_runner Base)
             {
+            if (code.Count() == 3)
+            {
+                Base.datas[Base.datas.Count() - 2].setCustom(code[2], code[1], D.referenceVar(code[1])); return;
+            }
                 Base.datas[Base.datas.Count() - 2].SuperSet(code[1], D.referenceVar(code[1]));
                 //else { Console.WriteLine("Error: 8, unable to push, Line "+Base.position); }
                 //else if (D.isvar(code[1])) { Base.datas[Base.datas.Count - 1].se(code[1], D.referenceI(code[1])); }
@@ -2634,6 +2670,10 @@ namespace jumpE_basic
             //pre_defined_variable f = new pre_defined_variable();
             public static void pushA(List<string> code, Data D, base_runner Base)
             {
+            if (code.Count() == 4)
+            {
+                Base.datas[Base.datas.Count() - 2].setCustom(code[4], code[2], D.referenceVar(code[1])); return;
+            }
                 Base.datas[Base.datas.Count() - 2].SuperSet(code[2], D.referenceVar(code[1]));
                 //else { Console.WriteLine("Error: 8, unable to push, Line "+Base.position); }
                 //else if (D.isvar(code[1])) { Base.datas[Base.datas.Count - 1].se(code[1], D.referenceI(code[1])); }
@@ -2735,22 +2775,22 @@ namespace jumpE_basic
                             {
                                 a = ((Number)D.referenceCustom(D.custtypeofkey(code[2]), code[2])).get_value();
                             }
-                            if (D.issheet(statments[iff][2]))
+                            else if (D.issheet(statments[iff][2]))
                             {
                                 a = D.referenceSheet(statments[iff][2]).typeidentifier;
                             }
-                            //else if (D.instring(statments[iff][2]))
-                            //{
-                            //    if (D.issheet(D.referenceS(statments[iff][2]) + "#"))
-                            //    {
-                            //        a = D.referenceSheet(D.referenceS(statments[iff][2]) + "#").typeidentifier;
-                            //    }
-                            //}
+                            else if (D.referenceVar(statments[iff][2]) is Valued)
+                            {
+                                if (D.issheet(((Valued)D.referenceVar(statments[iff][2])).getV().ToString()))
+                                {
+                                    a = D.referenceSheet(((Valued)D.referenceVar(statments[iff][2])).getV().ToString()).typeidentifier;
+                                }
+                            }
                             else if (double.TryParse(statments[iff][2], out double ad))
                             {
                                 a = ad;
                             }
-                            if (((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[2]), code[2]) is Number : false))
+                            else if (((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[2]), code[2]) is Number : false))
                             {
                                 a = ((Number)D.referenceCustom(D.custtypeofkey(code[2]), code[2])).get_value();
                             }
@@ -2758,13 +2798,13 @@ namespace jumpE_basic
                             {
                                 b = D.referenceSheet(statments[iff][3]).typeidentifier;
                             }
-                            //else if (D.instring(statments[iff][3]))
-                            //{
-                            //    if (D.issheet(D.referenceS(statments[iff][3]) + "#"))
-                            //    {
-                            //        b = D.referenceSheet(D.referenceS(statments[iff][3]) + "#").typeidentifier;
-                            //    }
-                            //}
+                            else if (D.referenceVar(statments[iff][3]) is Valued)
+                            {
+                                if (D.issheet(((Valued)D.referenceVar(statments[iff][3])).getV().ToString()))
+                                {
+                                    b = D.referenceSheet(((Valued)D.referenceVar(statments[iff][3])).getV().ToString()).typeidentifier;
+                                }
+                            }
                             else if (double.TryParse(statments[iff][3], out double bd))
                             {
                                 b = bd;
@@ -4462,10 +4502,10 @@ namespace USEC
             }
             public static void return_func(List<string> code, Data D, base_runner Base)
             {
-            if (Base.positions.Count > 1)
+            if (Base.positions.Count >= 1)
             {
-                Base.changePosition(Base.positions[Base.positions.Count - 1]);
-                Base.positions.RemoveAt(Base.positions.Count - 1);
+                Base.changePosition(Base.positions[Base.positions.Count() - 1]);
+                Base.positions.RemoveAt(Base.positions.Count() - 1);
             }
             }
             public static void jump(List<string> code, Data D, base_runner Base)
@@ -4771,7 +4811,7 @@ namespace USEC
         // Tokenizer class for breaking expressions into tokens
         public class Math_Tokenizer
         {
-            private static readonly Regex tokenPattern = new Regex(@"\d+|true|false|\+|\-|\*|\/|\%|\(|\)|&&|\|\||!|<=|>=|<|>|==|[^\s]+");
+            private static readonly Regex tokenPattern = new Regex(@"\d+|true|false|\+|\-|\*|\/|\%|\(|\)|&&|\|\||<=|>=|<|>|==|!=|[^\s]+");
 
             public static List<Token> Tokenize(string expression)
             {
@@ -4943,6 +4983,25 @@ namespace USEC
                     _ => throw new Exception("Unknown operator")
                 };
             }
+            public override bool EvaluateBoolean()
+            {
+                double leftValue = left.Evaluate();
+                double rightValue = right.Evaluate();
+
+                return op switch
+                {
+                    "&&" => leftValue != 0 && rightValue != 0,
+                    "||" => leftValue != 0 || rightValue != 0,
+                    "==" => leftValue == rightValue,
+                    "<" => leftValue < rightValue,
+                    ">" => leftValue > rightValue,
+                    "<=" => leftValue <= rightValue,
+                    ">=" => leftValue >= rightValue,
+                    "!=" => leftValue != rightValue,
+                    _ => throw new Exception("Unknown operator")
+                };
+            }
+
         }
 
         // Node for unary operations
@@ -4977,7 +5036,7 @@ namespace USEC
     {
         { "||", 1 },
         { "&&", 2 },
-        { "==", 3 }, { "<", 3 }, { ">", 3 }, { "<=", 3 }, { ">=", 3 },
+        { "==", 3 }, { "<", 3 }, { ">", 3 }, { "<=", 3 }, { ">=", 3 }, {"!=",3 },
         { "+", 4 }, { "-", 4 },
         { "*", 5 }, { "/", 5 }, { "%", 5 },
         { "!", 6 }
