@@ -356,6 +356,10 @@ namespace jumpE_basic
     { 
         public double get_value();
     }
+    public interface Copyable
+    {
+        public object Copy();
+    }
 
     public class GB
     {
@@ -1578,6 +1582,14 @@ namespace jumpE_basic
             {
                 setUNIQ(key, ((UNIQ)data));
             }
+            else if(data is CustTypeName)
+            {
+                setCustom(((CustTypeName)data).name(), key, (data));
+            }
+            else if (data is list)
+            {
+                setlist(key, (list)data);
+            }
 
 
         }
@@ -2631,15 +2643,21 @@ namespace jumpE_basic
             }
             public static void bring(List<string> code, Data D, base_runner Base)
             {
-
-                D.SuperSet(code[1], Base.datas[Base.datas.Count - 2].referenceVar(code[1]));
+                object obj = Base.datas[Base.datas.Count()-2].referenceVar(code[1]);
+                if(obj is Copyable)
+                    obj = ((Copyable)obj).Copy();
+     
+                D.SuperSet(code[1], obj);
                 //adding lines functions and files
 
                 //else { Console.WriteLine("Error: 7, unable to bring, Line "+Base.position); }
             }
             public static void bringA(List<string> code, Data D, base_runner Base)
             {
-                D.SuperSet(code[2], Base.datas[Base.datas.Count - 2].referenceVar(code[1]));
+                object obj = Base.datas[Base.datas.Count()-2].referenceVar(code[1]);
+                if (obj is Copyable)
+                    obj = ((Copyable)obj).Copy();
+                D.SuperSet(code[2], obj);
                 //else { Console.WriteLine("Error: 7, unable to bring, Line "+Base.position); }
             }
             public static void bringDL(List<string> code, Data D, base_runner Base)
@@ -2658,11 +2676,10 @@ namespace jumpE_basic
             //pre_defined_variable f = new pre_defined_variable();
             public static void push(List<string> code, Data D, base_runner Base)
             {
-            if (code.Count() == 3)
-            {
-                Base.datas[Base.datas.Count() - 2].setCustom(code[2], code[1], D.referenceVar(code[1])); return;
-            }
-                Base.datas[Base.datas.Count() - 2].SuperSet(code[1], D.referenceVar(code[1]));
+                object obj = D.referenceVar(code[1]);
+                if (obj is Copyable)
+                    obj = ((Copyable)obj).Copy();
+                Base.datas[Base.datas.Count() - 2].SuperSet(code[1], obj);
                 //else { Console.WriteLine("Error: 8, unable to push, Line "+Base.position); }
                 //else if (D.isvar(code[1])) { Base.datas[Base.datas.Count - 1].se(code[1], D.referenceI(code[1])); }
 
@@ -2670,11 +2687,10 @@ namespace jumpE_basic
             //pre_defined_variable f = new pre_defined_variable();
             public static void pushA(List<string> code, Data D, base_runner Base)
             {
-            if (code.Count() == 4)
-            {
-                Base.datas[Base.datas.Count() - 2].setCustom(code[4], code[2], D.referenceVar(code[1])); return;
-            }
-                Base.datas[Base.datas.Count() - 2].SuperSet(code[2], D.referenceVar(code[1]));
+                object obj = D.referenceVar(code[1]);
+                if (obj is Copyable)
+                    obj = ((Copyable)obj).Copy();
+                Base.datas[Base.datas.Count() - 2].SuperSet(code[2], obj);
                 //else { Console.WriteLine("Error: 8, unable to push, Line "+Base.position); }
                 //else if (D.isvar(code[1])) { Base.datas[Base.datas.Count - 1].se(code[1], D.referenceI(code[1])); }
 
@@ -2880,6 +2896,30 @@ namespace jumpE_basic
                             {
                                 result = true;
                             }
+                            if (statments[iff][0] == "or" || statments[iff][0] == "nor")
+                            {
+                                orsD = true;
+                            }
+                            if (result && statments[iff][0] == "or" && !ors)
+                            {
+                                ors = true;
+                            }
+                            if (!result && statments[iff][0] == "nor" && !ors)
+                            {
+                                ors = true;
+                            }
+                            if (!result && ands && statments[iff][0] == "and")
+                            {
+                                ands = false;
+                            }
+                            if (result && ands && statments[iff][0] == "not")
+                            {
+                                ands = false;
+                            }
+                        }
+                        else if (statments[iff][1] == "exist")
+                        {
+                            result = D.isvar(statments[iff][2]);
                             if (statments[iff][0] == "or" || statments[iff][0] == "nor")
                             {
                                 orsD = true;
@@ -4183,7 +4223,10 @@ namespace USEC
                             default:
                                 if (Data.custtype.Contains((((list)D.referenceVar(code[0])).t)))
                                 {
-                                    ((list)D.referenceVar(code[0])).add(D.referenceCustom(((list)D.referenceVar(code[0])).t, code[2]));
+                                    object obj = D.referenceCustom(((list)D.referenceVar(code[0])).t, code[2]);
+                                    if(obj is Copyable)
+                                        obj = ((Copyable)obj).Copy();
+                                    ((list)D.referenceVar(code[0])).add(obj);
                                 }
                                 break;
                         }
@@ -4539,8 +4582,24 @@ namespace USEC
                             }
                         }
                     }
+                    else if (code[1] == "->")
+                    {
 
-                }
+                        for (int i = Base.get_position(); i<Base.lines.Count();i++)
+                        {
+                            //Console.WriteLine(i);Console.WriteLine(">> " + code[2]);
+                            if (SimpleTokenizer.no_tab_spaces(Base.lines[i]) == ">>" + code[2])
+                            {
+
+                                //D.setI(code[2], Base.get_position());
+                                Base.changePosition(i);
+                                break;
+
+                            }
+                        }
+                    }
+
+            }
                 catch (Exception e)
                 {
                     Console.WriteLine(e + " Line: " + Base.get_position());
