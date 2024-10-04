@@ -2643,7 +2643,7 @@ namespace jumpE_basic
             }
             public static void bring(List<string> code, Data D, base_runner Base)
             {
-                object obj = D.referenceVar(code[1]);
+                object obj = Base.datas[Base.datas.Count()-2].referenceVar(code[1]);
                 if(obj is Copyable)
                     obj = ((Copyable)obj).Copy();
      
@@ -2654,7 +2654,7 @@ namespace jumpE_basic
             }
             public static void bringA(List<string> code, Data D, base_runner Base)
             {
-                object obj = D.referenceVar(code[1]);
+                object obj = Base.datas[Base.datas.Count()-2].referenceVar(code[1]);
                 if (obj is Copyable)
                     obj = ((Copyable)obj).Copy();
                 D.SuperSet(code[2], obj);
