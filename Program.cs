@@ -2920,6 +2920,26 @@ namespace jumpE_basic
                         else if (statments[iff][1] == "exist")
                         {
                             result = D.isvar(statments[iff][2]);
+                            if (statments[iff][0] == "or" || statments[iff][0] == "nor")
+                            {
+                                orsD = true;
+                            }
+                            if (result && statments[iff][0] == "or" && !ors)
+                            {
+                                ors = true;
+                            }
+                            if (!result && statments[iff][0] == "nor" && !ors)
+                            {
+                                ors = true;
+                            }
+                            if (!result && ands && statments[iff][0] == "and")
+                            {
+                                ands = false;
+                            }
+                            if (result && ands && statments[iff][0] == "not")
+                            {
+                                ands = false;
+                            }
                         }
 
                         else
