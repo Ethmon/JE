@@ -3183,6 +3183,9 @@ namespace USEC
         {
             foreach (var file in _dynamicly_compiled)
             {
+                _compiledAssemblies.Remove(_compiledAssemblies.FirstOrDefault(a => a.Location == file));
+                _dynamicly_compiled.Remove(file);
+                _compiledAssemblyFiles.Remove(file);
                 if (File.Exists(file))
                 {
                     File.Delete(file);
