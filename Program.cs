@@ -2917,6 +2917,10 @@ namespace jumpE_basic
                                 ands = false;
                             }
                         }
+                        else if (statments[iff][1] == "exist")
+                        {
+                            result = D.isvar(statments[iff][2]);
+                        }
 
                         else
                         {
