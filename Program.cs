@@ -2762,8 +2762,17 @@ namespace jumpE_basic
                             //else { }
                         if (statments[iff][1] == "obj")
                         {
-                            if (D.custtypeofkey(statments[iff][2]) != "Null" && D.custtypeofkey(statments[iff][3]) != "Null"&& D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2]) == D.referenceCustom(D.custtypeofkey(statments[iff][3]), statments[iff][3]))
-                                result = true;
+                            if (D.custtypeofkey(statments[iff][2]) != "Null" && D.custtypeofkey(statments[iff][3]) != "Null")
+                                {
+                                if (D.custtypeofkey(statments[iff][2]) == D.custtypeofkey(statments[iff][3]))
+                                    {
+                                        object a = D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2]);
+                                        object b = D.referenceCustom(D.custtypeofkey(statments[iff][3]), statments[iff][3]);
+                                        result = a.Equals(b);
+                                    }
+                                else if(D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2]) == D.referenceCustom(D.custtypeofkey(statments[iff][3]), statments[iff][3]))
+                                    result = true;
+                            }
                             if (statments[iff][0] == "or" || statments[iff][0] == "nor")
                             {
                                 orsD = true;
