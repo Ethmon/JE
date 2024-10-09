@@ -28,6 +28,8 @@ using System.Diagnostics.Eventing.Reader;
 using System.Runtime.InteropServices.JavaScript;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Collections;
+using System.Drawing;
+using System.Drawing.Printing;
 using static jumpE_basic.base_runner;
 
 namespace jumpE_basic
@@ -3064,7 +3066,7 @@ namespace jumpE_basic
             // Read the contents of the .cs file
             string fileContent = File.ReadAllText(filePath);
             
-            string generatedCode = "using System;\r\nusing System.Linq;\r\nusing System.Text;\r\nusing System.IO;\r\nusing static System.Runtime.InteropServices.JavaScript.JSType;\r\n//using System.Windows;\r\nusing System.Collections;\r\nusing System.Collections.Generic;\r\nusing jumpE_basic;";
+            string generatedCode = "using System;\r\nusing System.Linq;\r\nusing System.Text;\r\nusing System.IO;\r\nusing static System.Runtime.InteropServices.JavaScript.JSType;\r\n//using System.Windows;\r\nusing System.Collections;\r\nusing System.Collections.Generic;\r\nusing System.Drawing;\r\nusing jumpE_basic;";
             for (int d = 0; d < assemblynames.Count(); d++)
             {
                 generatedCode += "\nusing " + assemblynames[d] + ";";
@@ -3140,7 +3142,7 @@ namespace jumpE_basic
             // Read the contents of the .cs file
             string fileContent = File.ReadAllText(filePath);
             //Console.WriteLine(fileContent);
-            string generatedCode = "using System;\r\nusing System.Linq;\r\nusing System.Text;\r\nusing System.IO;\r\nusing static System.Runtime.InteropServices.JavaScript.JSType;\r\n//using System.Windows;\r\nusing System.Collections;\r\nusing System.Collections.Generic;\r\nusing jumpE_basic;";
+            string generatedCode = "using System;\r\nusing System.Linq;\r\nusing System.Text;\r\nusing System.IO;\r\nusing static System.Runtime.InteropServices.JavaScript.JSType;\r\n//using System.Windows;\r\nusing System.Collections;\r\nusing System.Collections.Generic;\r\nusing System.Drawing;\r\nusing jumpE_basic;";
             for(int d = 0; d < assemblynames.Count(); d++)
             {
                 generatedCode += "\nusing " + assemblynames[d] + ";";
@@ -3252,6 +3254,7 @@ namespace USEC
             MetadataReference.CreateFromFile(typeof(Regex).Assembly.Location),               // System.Text.RegularExpressions
             MetadataReference.CreateFromFile(typeof(Uri).Assembly.Location),                 // System for Uri handling
             
+            
             };
             // System.Runtime (important for .NET types)
             // Add additional necessary assemblies here
@@ -3268,6 +3271,8 @@ namespace USEC
             //    .FirstOrDefault(a => a.GetName().Name == "System.IO").Location));
             references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()
                 .FirstOrDefault(a => a.GetName().Name == "System.Runtime.InteropServices.JavaScript").Location));
+            references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()
+                .FirstOrDefault(a => a.GetName().Name == "System.Drawing").Location));
 
             //references.AddRange(_compiledAssemblies.Select(assembly => CompilationReference.CreateFromImage(assembly.Location.)));
             //references.AddRange(_compiledAssemblyBytes.Select(bytes => CompilationReference.CreateFromImage(bytes)));
