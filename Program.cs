@@ -763,7 +763,14 @@ namespace jumpE_basic
             //d.strings = new Dictionary<string, string>(strings);
             //d.doubles = new Dictionary<string, double>(doubles);
             //d.integers = new Dictionary<string, int>(integers);
-            d.custom_types = new Dictionary<string, Dictionary<string, object>>(custom_types);
+            foreach(string key in custtype)
+            {
+                if(custom_types.ContainsKey(key))
+                {
+                    d.custom_types.Add(key, new Dictionary<string, object>(custom_types[key]));
+                }
+                
+            }
             foreach (string key in sheets.Keys)
             {
                 d.sheets.Add(key, sheets[key].Copy());
@@ -771,6 +778,7 @@ namespace jumpE_basic
             //d.lines = new Dictionary<string, Line>(lines);
             d.functions = new Dictionary<string, Function>(functions);
             d.files = new Dictionary<string, JFile>(files);
+            d.lists = new Dictionary<string, list>(lists);
             return d;
         }
         public static void add_custtype(string type,Type actualtype)
@@ -916,10 +924,10 @@ namespace jumpE_basic
             //{
             //    mama += kvp.Key + "=" + kvp.Value + ":UNIQ|\n";
             //}
-            //foreach (var kvp in lists)
-            //{
-            //    mama += kvp.Key + "=" + kvp.Value + ":list|\n";
-            //}
+            foreach (var kvp in lists)
+            {
+                mama += kvp.Key + "=" + kvp.Value + ":list|" + ((list)kvp.Value).t +"|\n";
+            }
             return mama;
 
 
@@ -1584,14 +1592,15 @@ namespace jumpE_basic
             {
                 setUNIQ(key, ((UNIQ)data));
             }
-            else if(data is CustTypeName)
-            {
-                setCustom(((CustTypeName)data).name(), key, (data));
-            }
             else if (data is list)
             {
                 setlist(key, (list)data);
             }
+            else if(data is CustTypeName)
+            {
+                setCustom(((CustTypeName)data).name(), key, (data));
+            }
+            
 
 
         }
@@ -2032,6 +2041,8 @@ namespace jumpE_basic
                 { "//" , comment }, { "#" , comment },
                 { "raise" , raise },
                 { "push" , push },
+                { "pushGod" , pushGOD },
+                { "PowerPush" , PowerPush },
                 { "pop" , pop },
                 { "call" , callLayer },
                 { "side" , sideLayer },
@@ -2073,7 +2084,7 @@ namespace jumpE_basic
 
             };
             public static Dictionary<string, Action<List<string>, Data, base_runner>> seters = new Dictionary<string, Action<List<string>, Data, base_runner>>();
-            public static Dictionary<string, Func<List<string>, Data, base_runner, List<object>>> listsaaa = new Dictionary<string, Func<List<string>, Data, base_runner, List<object>>>();
+            public static Dictionary<string, Func<List<string>, Data, base_runner, object>> listsaaa = new Dictionary<string, Func<List<string>, Data, base_runner, object>>();
             public CommandRegistry()
             {
                 //print print = new print();//prints to console, can use variables and strings by putting them in quotes(must be seperated by spaces)
@@ -2262,6 +2273,21 @@ namespace jumpE_basic
                     Base.datas[0].setCustom(D.custtypeofkey(code[1]),code[1], D.refrenceCustom(D.custtypeofkey(code[1]), code[1]));
                 }
             }
+            public static void PowerPush(List<string> code, Data D, base_runner Base)
+            { 
+                if (D.issheet(code[1]))
+            {
+                Base.datas[Base.datas.Count() - 2].SuperSet(code[1], D.referenceSheet(code[1]));
+                }
+                else if (D.issheet(code[1]))
+            {
+                Base.datas[Base.datas.Count() - 2].SuperSet(code[1], D.referenceSheet(code[1] + "#"));
+                }
+                else if (D.custtypeofkey(code[1]) != "Null")
+            {
+                Base.datas[Base.datas.Count()-2].SuperSet( code[1], D.refrenceCustom(D.custtypeofkey(code[1]), code[1]));
+                }
+            }
 
             public static void comment(List<string> code, Data D, base_runner Base)
             {
@@ -2347,7 +2373,7 @@ namespace jumpE_basic
                             int kk = 0;
                             if (D.isnumvar(code[i + 1]))
                             {
-                                kk += (int)D.referenceVar(code[i + 1]);
+                                kk += (int)(((Number)D.referenceVar(code[i + 1])).get_value());
                             }
                             else
                             {
@@ -2396,7 +2422,7 @@ namespace jumpE_basic
                             int kk = 0;
                             if (D.isnumvar(code[i + 1]))
                             {
-                                kk += (int)D.referenceVar(code[i + 1]);
+                                kk += (int)((Number)D.referenceVar(code[i + 1])).get_value();
                             }
                             else
                             {
@@ -3075,7 +3101,7 @@ namespace jumpE_basic
             // Read the contents of the .cs file
             string fileContent = File.ReadAllText(filePath);
             
-            string generatedCode = "using System;\r\nusing System.Linq;\r\nusing System.Text;\r\nusing System.IO;\r\nusing static System.Runtime.InteropServices.JavaScript.JSType;\r\n//using System.Windows;\r\nusing System.Collections;\r\nusing System.Collections.Generic;\r\nusing System.Drawing;\r\nusing jumpE_basic;";
+            string generatedCode = "using System;\r\nusing System.Linq;\r\nusing System.Text;\r\nusing System.IO;\r\nusing static System.Runtime.InteropServices.JavaScript.JSType;\r\n//using System.Windows;\r\nusing System.Collections;\r\nusing System.Collections.Generic;\r\nusing jumpE_basic;";
             for (int d = 0; d < assemblynames.Count(); d++)
             {
                 generatedCode += "\nusing " + assemblynames[d] + ";";
@@ -3151,7 +3177,7 @@ namespace jumpE_basic
             // Read the contents of the .cs file
             string fileContent = File.ReadAllText(filePath);
             //Console.WriteLine(fileContent);
-            string generatedCode = "using System;\r\nusing System.Linq;\r\nusing System.Text;\r\nusing System.IO;\r\nusing static System.Runtime.InteropServices.JavaScript.JSType;\r\n//using System.Windows;\r\nusing System.Collections;\r\nusing System.Collections.Generic;\r\nusing System.Drawing;\r\nusing jumpE_basic;";
+            string generatedCode = "using System;\r\nusing System.Linq;\r\nusing System.Text;\r\nusing System.IO;\r\nusing static System.Runtime.InteropServices.JavaScript.JSType;\r\n//using System.Windows;\r\nusing System.Collections;\r\nusing System.Collections.Generic;\r\nusing jumpE_basic;";
             for(int d = 0; d < assemblynames.Count(); d++)
             {
                 generatedCode += "\nusing " + assemblynames[d] + ";";
@@ -3280,8 +3306,8 @@ namespace USEC
             //    .FirstOrDefault(a => a.GetName().Name == "System.IO").Location));
             references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()
                 .FirstOrDefault(a => a.GetName().Name == "System.Runtime.InteropServices.JavaScript").Location));
-            references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()
-                .FirstOrDefault(a => a.GetName().Name == "System.Drawing").Location));
+            //references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()
+            //    .FirstOrDefault(a => a.GetName().Name == "System.Drawing").Location));
 
             //references.AddRange(_compiledAssemblies.Select(assembly => CompilationReference.CreateFromImage(assembly.Location.)));
             //references.AddRange(_compiledAssemblyBytes.Select(bytes => CompilationReference.CreateFromImage(bytes)));
@@ -4251,7 +4277,7 @@ namespace USEC
                     {
                         int index = 0;
                         if (D.isnumvar(code[1]))
-                            index = (int)D.referenceVar(code[1]);
+                            index = (int)((Number)D.referenceVar(code[1])).get_value();
                         else if (int.TryParse(code[1], out int valindex)) index = valindex;
                         switch (((list)D.referenceVar(code[0])).t)
                         {
@@ -4414,10 +4440,11 @@ namespace USEC
                             //    }
                             //    break;
                             default:
-                                string typess = D.custtypeofkey(code[0]);
+                            string typess = ((list)D.referenceVar(code[0])).t;
                                 if (typess != "Null")
                                 {
-                                    ((list)D.referenceVar(code[0])).set(index, CommandRegistry.listsaaa[typess](code, D, Base));
+                                object obj = CommandRegistry.listsaaa[typess](code, D, Base);
+                                ((list)D.referenceVar(code[0])).set(index, obj);
                                 }
                                 break;
 
@@ -4612,6 +4639,23 @@ namespace USEC
                             }
                         }
                     }
+                else if (code[1] == "<-")
+                {
+
+                    for (int i = Base.get_position(); i >= 0; i--)
+                    {
+                        //Console.WriteLine(i);Console.WriteLine(">> " + code[2]);
+                        if (SimpleTokenizer.no_tab_spaces(Base.lines[i]) == ">>" + code[2])
+                        {
+
+                            //D.setI(code[2], Base.get_position());
+                            Base.changePosition(i);
+                            break;
+
+                        }
+                    }
+                }
+
 
             }
                 catch (Exception e)
