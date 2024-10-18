@@ -5326,6 +5326,10 @@ namespace USEC
                 {
                     equationa += k + " ";
                 }
+                else if (D.custtypeofkey(equation[i]) != "Null")
+                {
+                    equationa += ((Valued)D.referenceCustom(D.custtypeofkey(equation[i]), equation[i])).getV().ToString() + " ";
+                }
 
             }
             return EvaluateMathExpression(equationa);
@@ -5355,6 +5359,10 @@ namespace USEC
                 else if (double.TryParse(equation[i], out double k))
                 {
                     equationa += equation[i] + " ";
+                }
+                else if (D.custtypeofkey(equation[i]) != "Null")
+                {
+                    equationa += ((Valued)D.referenceCustom(D.custtypeofkey(equation[i]), equation[i])).getV().ToString() + " ";
                 }
 
             }
@@ -5390,6 +5398,10 @@ namespace USEC
                 {
                     equationa += k + " ";
                 }
+                else if (D.custtypeofkey(equation[i]) != "Null")
+                {
+                    equationa += ((Valued)D.referenceCustom(D.custtypeofkey(equation[i]), equation[i])).getV().ToString() + " ";
+                }
 
             }
             return EvaluateByteArrayOperation(equationa);
@@ -5419,6 +5431,10 @@ namespace USEC
                 else if (double.TryParse(equation[i], out double k))
                 {
                     equationa += equation[i] + " ";
+                }
+                else if (D.custtypeofkey(equation[i]) != "Null")
+                {
+                    equationa += ((Valued)D.referenceCustom(D.custtypeofkey(equation[i]), equation[i])).getV().ToString() + " ";
                 }
 
             }
