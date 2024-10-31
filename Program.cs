@@ -4625,7 +4625,7 @@ namespace USEC
                     }
                     else if (code[1] == "->")
                     {
-
+                    int jjjj = 0;
                         for (int i = Base.get_position(); i<Base.lines.Count();i++)
                         {
                             //Console.WriteLine(i);Console.WriteLine(">> " + code[2]);
@@ -4633,15 +4633,19 @@ namespace USEC
                             {
 
                                 //D.setI(code[2], Base.get_position());
-                                Base.changePosition(i);
+                                Base.changePosition(i-jjjj);
                                 break;
 
+                            }
+                        if (SimpleTokenizer.no_tab_spaces(Base.lines[i]) == "")
+                        {
+                                jjjj++;
                             }
                         }
                     }
                 else if (code[1] == "<-")
                 {
-
+                    int jjjj = 0;
                     for (int i = Base.get_position(); i >= 0; i--)
                     {
                         //Console.WriteLine(i);Console.WriteLine(">> " + code[2]);
@@ -4649,9 +4653,13 @@ namespace USEC
                         {
 
                             //D.setI(code[2], Base.get_position());
-                            Base.changePosition(i);
+                            Base.changePosition(i+jjjj);
                             break;
 
+                        }
+                        if (SimpleTokenizer.no_tab_spaces(Base.lines[i]) == "")
+                        {
+                            jjjj++;
                         }
                     }
                 }
