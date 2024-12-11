@@ -1039,7 +1039,27 @@ namespace jumpE_basic
             //}
             //return false;
         }
-
+        public object[][][] getArrayOfAllCustomVariables()
+        {
+            object[][][] returner = new object[custom_types.Count][][];
+            int i = 0;
+            foreach (string key in custom_types.Keys)
+            {
+                returner[i] = new object[custom_types[key].Count][];
+                int j = 0;
+                foreach (string key2 in custom_types[key].Keys)
+                {
+                    returner[i][j] = new object[3];
+                    returner[i][j][0] = key;
+                    returner[i][j][1] = key2;
+                    returner[i][j][2] = custom_types[key][key2];
+                    j++;
+                }
+                i++;
+            }
+            return returner;
+        }
+        
         //public bool inint(string key)
         //{
         //    if (integers.ContainsKey(key))
@@ -1841,6 +1861,7 @@ namespace jumpE_basic
         public string taken_in_string;
         public List<int> positions = new List<int>();
         public CommandRegistry commandRegistry = new CommandRegistry();
+        public static Dictionary<string, Func<string[], Data, base_runner, bool[]>> StatmentAdds = new Dictionary<string, Func<string[], Data, base_runner, bool[]>>();
         Data data;
         public List<Data> datas = new List<Data>();
         command_centralls interorouter = new command_centralls();
@@ -2061,7 +2082,8 @@ namespace jumpE_basic
                 { "method" , Method_instantiate },
                 { "<><" , set_Return },
                 { "list" , listFunc },
-                { "useDC" , useDC }
+                { "useDC" , useDC },
+                { "file" , File_func }
 
                 
 
@@ -2762,275 +2784,288 @@ namespace jumpE_basic
                         }
                         bool result = false;
                         string equation = "";
-                        //if (statments[iff][1] == "bool")
+                    //if (statments[iff][1] == "bool")
+                    //{
+                    //    if(statments[iff][2] == "true")
+                    //    {
+                    //        result = true;
+                    //    }
+                    //    else if (statments[iff][2] == "false")
+                    //    {
+                    //        result = false;
+                    //    }
+                    //    else if ((D.custtypeofkey(statments[iff][2]))!="Null")
+                    //        if(D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2]) is TORF)
+                    //        {
+                    //            result = ((TORF)D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2])).booledval();
+                    //        }
+
+                    //}
+                    /*if (code.Count() == 2)
+                    {
+                        D.setI(code[1], 0);
+                        this.commands.add_command(code[1], this.Math_equation);
+
+                    }*/ // this will be for booleans when i get around to 
+                        //else { }
+                    if (statments[iff][1] == "obj")
+                    {
+                        if (D.custtypeofkey(statments[iff][2]) != "Null" && D.custtypeofkey(statments[iff][3]) != "Null")
+                        {
+                            if (D.custtypeofkey(statments[iff][2]) == D.custtypeofkey(statments[iff][3]))
+                            {
+                                object a = D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2]);
+                                object b = D.referenceCustom(D.custtypeofkey(statments[iff][3]), statments[iff][3]);
+                                result = a.Equals(b);
+                            }
+                            else if (D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2]) == D.referenceCustom(D.custtypeofkey(statments[iff][3]), statments[iff][3]))
+                                result = true;
+                        }
+                        if (statments[iff][0] == "or" || statments[iff][0] == "nor")
+                        {
+                            orsD = true;
+                        }
+                        if (result && statments[iff][0] == "or" && !ors)
+                        {
+                            ors = true;
+                        }
+                        if (!result && statments[iff][0] == "nor" && !ors)
+                        {
+                            ors = true;
+                        }
+                        if (!result && ands && statments[iff][0] == "and")
+                        {
+                            ands = false;
+                        }
+                        if (result && ands && statments[iff][0] == "not")
+                        {
+                            ands = false;
+                        }
+                    }
+                    else if (statments[iff][1] == "typ")
+                    {
+                        double a = 0;
+                        double b = -1;
+                        if (((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[2]), code[2]) is Number : false))
+                        {
+                            a = ((Number)D.referenceCustom(D.custtypeofkey(code[2]), code[2])).get_value();
+                        }
+                        else if (D.issheet(statments[iff][2]))
+                        {
+                            a = D.referenceSheet(statments[iff][2]).typeidentifier;
+                        }
+                        else if (D.referenceVar(statments[iff][2]) is Valued)
+                        {
+                            if (D.issheet(((Valued)D.referenceVar(statments[iff][2])).getV().ToString()))
+                            {
+                                a = D.referenceSheet(((Valued)D.referenceVar(statments[iff][2])).getV().ToString()).typeidentifier;
+                            }
+                        }
+                        else if (double.TryParse(statments[iff][2], out double ad))
+                        {
+                            a = ad;
+                        }
+                        else if (((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[2]), code[2]) is Number : false))
+                        {
+                            a = ((Number)D.referenceCustom(D.custtypeofkey(code[2]), code[2])).get_value();
+                        }
+                        if (D.issheet(statments[iff][3]))
+                        {
+                            b = D.referenceSheet(statments[iff][3]).typeidentifier;
+                        }
+                        else if (D.referenceVar(statments[iff][3]) is Valued)
+                        {
+                            if (D.issheet(((Valued)D.referenceVar(statments[iff][3])).getV().ToString()))
+                            {
+                                b = D.referenceSheet(((Valued)D.referenceVar(statments[iff][3])).getV().ToString()).typeidentifier;
+                            }
+                        }
+                        else if (double.TryParse(statments[iff][3], out double bd))
+                        {
+                            b = bd;
+                        }
+                        if (b == a)
+                        {
+                            result = true;
+                        }
+                        if (statments[iff][0] == "or" || statments[iff][0] == "nor")
+                        {
+                            orsD = true;
+                        }
+                        if (result && statments[iff][0] == "or" && !ors)
+                        {
+                            ors = true;
+                        }
+                        if (!result && statments[iff][0] == "nor" && !ors)
+                        {
+                            ors = true;
+                        }
+                        if (!result && ands && statments[iff][0] == "and")
+                        {
+                            ands = false;
+                        }
+                        if (result && ands && statments[iff][0] == "not")
+                        {
+                            ands = false;
+                        }
+                    }
+                    else if (statments[iff][1] == "ver")
+                    {
+                        double a = 0;
+                        double b = -1;
+                        if (((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[2]), code[2]) is Number : false))
+                        {
+                            a = ((Number)D.referenceCustom(D.custtypeofkey(code[2]), code[2])).get_value();
+                        }
+                        else if (D.issheet(statments[iff][2]))
+                        {
+                            a = D.referenceSheet(statments[iff][2]).identifier;
+                        }
+                        //else if (D.instring(statments[iff][2]))
                         //{
-                        //    if(statments[iff][2] == "true")
+                        //    if (D.issheet(D.referenceS(statments[iff][2]) + "#"))
                         //    {
-                        //        result = true;
+                        //        a = D.referenceSheet(D.referenceS(statments[iff][2]) + "#").identifier;
                         //    }
-                        //    else if (statments[iff][2] == "false")
-                        //    {
-                        //        result = false;
-                        //    }
-                        //    else if ((D.custtypeofkey(statments[iff][2]))!="Null")
-                        //        if(D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2]) is TORF)
-                        //        {
-                        //            result = ((TORF)D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2])).booledval();
-                        //        }
-                            
                         //}
-                        /*if (code.Count() == 2)
+                        else if (double.TryParse(statments[iff][2], out double ad))
                         {
-                            D.setI(code[1], 0);
-                            this.commands.add_command(code[1], this.Math_equation);
-
-                        }*/ // this will be for booleans when i get around to 
-                            //else { }
-                        if (statments[iff][1] == "obj")
-                        {
-                            if (D.custtypeofkey(statments[iff][2]) != "Null" && D.custtypeofkey(statments[iff][3]) != "Null")
-                                {
-                                if (D.custtypeofkey(statments[iff][2]) == D.custtypeofkey(statments[iff][3]))
-                                    {
-                                        object a = D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2]);
-                                        object b = D.referenceCustom(D.custtypeofkey(statments[iff][3]), statments[iff][3]);
-                                        result = a.Equals(b);
-                                    }
-                                else if(D.referenceCustom(D.custtypeofkey(statments[iff][2]), statments[iff][2]) == D.referenceCustom(D.custtypeofkey(statments[iff][3]), statments[iff][3]))
-                                    result = true;
-                            }
-                            if (statments[iff][0] == "or" || statments[iff][0] == "nor")
-                            {
-                                orsD = true;
-                            }
-                            if (result && statments[iff][0] == "or" && !ors)
-                            {
-                                ors = true;
-                            }
-                            if (!result && statments[iff][0] == "nor" && !ors)
-                            {
-                                ors = true;
-                            }
-                            if (!result && ands && statments[iff][0] == "and")
-                            {
-                                ands = false;
-                            }
-                            if (result && ands && statments[iff][0] == "not")
-                            {
-                                ands = false;
-                            }
+                            a = ad;
                         }
-                        else if (statments[iff][1] == "typ")
+                        if (((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[2]), code[2]) is Number : false))
                         {
-                            double a = 0;
-                            double b = -1;
-                            if (((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[2]), code[2]) is Number : false))
-                            {
-                                a = ((Number)D.referenceCustom(D.custtypeofkey(code[2]), code[2])).get_value();
-                            }
-                            else if (D.issheet(statments[iff][2]))
-                            {
-                                a = D.referenceSheet(statments[iff][2]).typeidentifier;
-                            }
-                            else if (D.referenceVar(statments[iff][2]) is Valued)
-                            {
-                                if (D.issheet(((Valued)D.referenceVar(statments[iff][2])).getV().ToString()))
-                                {
-                                    a = D.referenceSheet(((Valued)D.referenceVar(statments[iff][2])).getV().ToString()).typeidentifier;
-                                }
-                            }
-                            else if (double.TryParse(statments[iff][2], out double ad))
-                            {
-                                a = ad;
-                            }
-                            else if (((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[2]), code[2]) is Number : false))
-                            {
-                                a = ((Number)D.referenceCustom(D.custtypeofkey(code[2]), code[2])).get_value();
-                            }
-                            if (D.issheet(statments[iff][3]))
-                            {
-                                b = D.referenceSheet(statments[iff][3]).typeidentifier;
-                            }
-                            else if (D.referenceVar(statments[iff][3]) is Valued)
-                            {
-                                if (D.issheet(((Valued)D.referenceVar(statments[iff][3])).getV().ToString()))
-                                {
-                                    b = D.referenceSheet(((Valued)D.referenceVar(statments[iff][3])).getV().ToString()).typeidentifier;
-                                }
-                            }
-                            else if (double.TryParse(statments[iff][3], out double bd))
-                            {
-                                b = bd;
-                            }
-                            if (b == a)
-                            {
-                                result = true;
-                            }
-                            if (statments[iff][0] == "or" || statments[iff][0] == "nor")
-                            {
-                                orsD = true;
-                            }
-                            if (result && statments[iff][0] == "or" && !ors)
-                            {
-                                ors = true;
-                            }
-                            if (!result && statments[iff][0] == "nor" && !ors)
-                            {
-                                ors = true;
-                            }
-                            if (!result && ands && statments[iff][0] == "and")
-                            {
-                                ands = false;
-                            }
-                            if (result && ands && statments[iff][0] == "not")
-                            {
-                                ands = false;
-                            }
+                            a = ((Number)D.referenceCustom(D.custtypeofkey(code[2]), code[2])).get_value();
                         }
-                        else if (statments[iff][1] == "ver")
+                        else if (D.issheet(statments[iff][3]))
                         {
-                            double a = 0;
-                            double b = -1;
-                            if (((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[2]), code[2]) is Number : false))
-                            {
-                                a = ((Number)D.referenceCustom(D.custtypeofkey(code[2]), code[2])).get_value();
-                            }
-                            else if (D.issheet(statments[iff][2]))
-                            {
-                                a = D.referenceSheet(statments[iff][2]).identifier;
-                            }
-                            //else if (D.instring(statments[iff][2]))
-                            //{
-                            //    if (D.issheet(D.referenceS(statments[iff][2]) + "#"))
-                            //    {
-                            //        a = D.referenceSheet(D.referenceS(statments[iff][2]) + "#").identifier;
-                            //    }
-                            //}
-                            else if (double.TryParse(statments[iff][2], out double ad))
-                            {
-                                a = ad;
-                            }
-                            if (((D.custtypeofkey(code[1]) != "Null") ? D.referenceCustom(D.custtypeofkey(code[2]), code[2]) is Number : false))
-                            {
-                                a = ((Number)D.referenceCustom(D.custtypeofkey(code[2]), code[2])).get_value();
-                            }
-                            else if (D.issheet(statments[iff][3]))
-                            {
-                                b = D.referenceSheet(statments[iff][3]).identifier;
-                            }
-                            //else if (D.instring(statments[iff][3]))
-                            //{
-                            //    if (D.issheet(D.referenceS(statments[iff][3]) + "#"))
-                            //    {
-                            //        b = D.referenceSheet(D.referenceS(statments[iff][3]) + "#").identifier;
-                            //    }
-                            //}
-                            else if (double.TryParse(statments[iff][3], out double bd))
-                            {
-                                b = bd;
-                            }
-                            if (b == a)
-                            {
-                                result = true;
-                            }
-                            if (statments[iff][0] == "or" || statments[iff][0] == "nor")
-                            {
-                                orsD = true;
-                            }
-                            if (result && statments[iff][0] == "or" && !ors)
-                            {
-                                ors = true;
-                            }
-                            if (!result && statments[iff][0] == "nor" && !ors)
-                            {
-                                ors = true;
-                            }
-                            if (!result && ands && statments[iff][0] == "and")
-                            {
-                                ands = false;
-                            }
-                            if (result && ands && statments[iff][0] == "not")
-                            {
-                                ands = false;
-                            }
+                            b = D.referenceSheet(statments[iff][3]).identifier;
                         }
-                        else if (statments[iff][1] == "exist")
+                        //else if (D.instring(statments[iff][3]))
+                        //{
+                        //    if (D.issheet(D.referenceS(statments[iff][3]) + "#"))
+                        //    {
+                        //        b = D.referenceSheet(D.referenceS(statments[iff][3]) + "#").identifier;
+                        //    }
+                        //}
+                        else if (double.TryParse(statments[iff][3], out double bd))
                         {
-                            result = D.isvar(statments[iff][2]);
-                            if (statments[iff][0] == "or" || statments[iff][0] == "nor")
-                            {
-                                orsD = true;
-                            }
-                            if (result && statments[iff][0] == "or" && !ors)
-                            {
-                                ors = true;
-                            }
-                            if (!result && statments[iff][0] == "nor" && !ors)
-                            {
-                                ors = true;
-                            }
-                            if (!result && ands && statments[iff][0] == "and")
-                            {
-                                ands = false;
-                            }
-                            if (result && ands && statments[iff][0] == "not")
-                            {
-                                ands = false;
-                            }
+                            b = bd;
                         }
-
+                        if (b == a)
+                        {
+                            result = true;
+                        }
+                        if (statments[iff][0] == "or" || statments[iff][0] == "nor")
+                        {
+                            orsD = true;
+                        }
+                        if (result && statments[iff][0] == "or" && !ors)
+                        {
+                            ors = true;
+                        }
+                        if (!result && statments[iff][0] == "nor" && !ors)
+                        {
+                            ors = true;
+                        }
+                        if (!result && ands && statments[iff][0] == "and")
+                        {
+                            ands = false;
+                        }
+                        if (result && ands && statments[iff][0] == "not")
+                        {
+                            ands = false;
+                        }
+                    }
+                    else if (statments[iff][1] == "exist")
+                    {
+                        result = D.isvar(statments[iff][2]);
+                        if (statments[iff][0] == "or" || statments[iff][0] == "nor")
+                        {
+                            orsD = true;
+                        }
+                        if (result && statments[iff][0] == "or" && !ors)
+                        {
+                            ors = true;
+                        }
+                        if (!result && statments[iff][0] == "nor" && !ors)
+                        {
+                            ors = true;
+                        }
+                        if (!result && ands && statments[iff][0] == "and")
+                        {
+                            ands = false;
+                        }
+                        if (result && ands && statments[iff][0] == "not")
+                        {
+                            ands = false;
+                        }
+                    }
+                    else if (StatmentAdds.ContainsKey(statments[iff][1]))
+                    {
+                        bool[] asa = StatmentAdds[statments[iff][1]](statments[iff].ToArray(), D, Base);
+                        if (statments[iff][0] == "or" || statments[iff][0] == "nor")
+                        {
+                            orsD = true;
+                        }
+                        if (!asa[1])
+                            ors = asa[0];
                         else
-                        {
-                            string[] strings = statments[iff].Skip(1).ToArray();
-                            result = doMathbool(strings, D, Base);
-                            //for (int i = 1; i < statments[iff].Count(); i++)
-                            //{
-                            //    double j;
-                            //    if (Double.TryParse(statments[iff][i], out j))
-                            //    {
-                            //        equation += j + " ";
-                            //    }
-                            //    else if (statments[iff][i] == "+" || statments[iff][i] == "-" || statments[iff][i] == "/" || statments[iff][i] == "*" || statments[iff][i] == "sin" || statments[iff][i] == "cos" || statments[iff][i] == "tan" ||
-                            //    statments[iff][i] == "csc" || statments[iff][i] == "sec" || statments[iff][i] == "cot" || statments[iff][i] == "root" || statments[iff][i] == ")" || statments[iff][i] == "(" || statments[iff][i] == " " || statments[iff][i] == "==" || statments[iff][i] == "!=" || statments[iff][i] == ">" || statments[iff][i] == "<" ||
-                            //    statments[iff][i] == "=>" || statments[iff][i] == "=<" || statments[iff][i] == "!")
-                            //    {
-                            //        equation += statments[iff][i] + " ";
-                            //    }
-                            //    else if (D.isnumvar(statments[iff][i]))
-                            //    {
-                            //        equation += D.referenceVar(statments[iff][i]) + " ";
-                            //    }
-                            //    else
-                            //    {
-                            //        equation += statments[iff][i] + " ";
-                            //        //Debug.WriteLine("not recognized when statement");
-                            //    }
-                            //}
-                            //CalculationEngine engine = new CalculationEngine();
-                            //result = Convert.ToBoolean(engine.Calculate(equation));
-                            //Console.WriteLine(result);
+                            ands = asa[0];
+                       
+                    }
 
-                            if (statments[iff][0] == "or" || statments[iff][0] == "nor")
-                            {
-                                orsD = true;
-                            }
-                            if (result && (statments[iff][0] == "or" && !ors))
-                            {
-                                ors = true;
-                            }
-                            if (!result && (statments[iff][0] == "nor" && !ors))
-                            {
-                                ors = true;
-                            }
-                            if (!result && (ands && statments[iff][0] == "and"))
-                            {
-                                ands = false;
-                            }
-                            if (result && (ands && statments[iff][0] == "not"))
-                            {
-                                ands = false;
-                            }
+                    else
+                    {
+                        string[] strings = statments[iff].Skip(1).ToArray();
+                        result = doMathbool(strings, D, Base);
+                        //for (int i = 1; i < statments[iff].Count(); i++)
+                        //{
+                        //    double j;
+                        //    if (Double.TryParse(statments[iff][i], out j))
+                        //    {
+                        //        equation += j + " ";
+                        //    }
+                        //    else if (statments[iff][i] == "+" || statments[iff][i] == "-" || statments[iff][i] == "/" || statments[iff][i] == "*" || statments[iff][i] == "sin" || statments[iff][i] == "cos" || statments[iff][i] == "tan" ||
+                        //    statments[iff][i] == "csc" || statments[iff][i] == "sec" || statments[iff][i] == "cot" || statments[iff][i] == "root" || statments[iff][i] == ")" || statments[iff][i] == "(" || statments[iff][i] == " " || statments[iff][i] == "==" || statments[iff][i] == "!=" || statments[iff][i] == ">" || statments[iff][i] == "<" ||
+                        //    statments[iff][i] == "=>" || statments[iff][i] == "=<" || statments[iff][i] == "!")
+                        //    {
+                        //        equation += statments[iff][i] + " ";
+                        //    }
+                        //    else if (D.isnumvar(statments[iff][i]))
+                        //    {
+                        //        equation += D.referenceVar(statments[iff][i]) + " ";
+                        //    }
+                        //    else
+                        //    {
+                        //        equation += statments[iff][i] + " ";
+                        //        //Debug.WriteLine("not recognized when statement");
+                        //    }
+                        //}
+                        //CalculationEngine engine = new CalculationEngine();
+                        //result = Convert.ToBoolean(engine.Calculate(equation));
+                        //Console.WriteLine(result);
+
+                        if (statments[iff][0] == "or" || statments[iff][0] == "nor")
+                        {
+                            orsD = true;
                         }
+                        if (result && (statments[iff][0] == "or" && !ors))
+                        {
+                            ors = true;
+                        }
+                        if (!result && (statments[iff][0] == "nor" && !ors))
+                        {
+                            ors = true;
+                        }
+                        if (!result && (ands && statments[iff][0] == "and"))
+                        {
+                            ands = false;
+                        }
+                        if (result && (ands && statments[iff][0] == "not"))
+                        {
+                            ands = false;
+                        }
+                    }
                     }
                 }
                 if (!orsD)
@@ -3288,6 +3323,7 @@ namespace USEC
             MetadataReference.CreateFromFile(typeof(File).Assembly.Location),                // System.IO
             MetadataReference.CreateFromFile(typeof(Regex).Assembly.Location),               // System.Text.RegularExpressions
             MetadataReference.CreateFromFile(typeof(Uri).Assembly.Location),                 // System for Uri handling
+            MetadataReference.CreateFromFile(typeof(Bitmap).Assembly.Location)
             
             
             };
@@ -3308,6 +3344,7 @@ namespace USEC
                 .FirstOrDefault(a => a.GetName().Name == "System.Runtime.InteropServices.JavaScript").Location));
             //references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()
             //    .FirstOrDefault(a => a.GetName().Name == "System.Drawing").Location));
+            
 
             //references.AddRange(_compiledAssemblies.Select(assembly => CompilationReference.CreateFromImage(assembly.Location.)));
             //references.AddRange(_compiledAssemblyBytes.Select(bytes => CompilationReference.CreateFromImage(bytes)));
@@ -4141,22 +4178,41 @@ namespace USEC
                     }
                     else if (code.Count == 2)
                     {
-                        if (code[1] == "inst")
+                    if (code[1] == "inst")
+                    {
 
-                            try
+                        try
+                        {
+                            string fileName = @"" + D.referenceFile(code[0]).get_file_path();
+                            using (StreamReader streamReader = File.OpenText(fileName))
                             {
-                                string fileName = @"" + D.referenceFile(code[0]).get_file_path();
-                                using (StreamReader streamReader = File.OpenText(fileName))
-                                {
-                                    string text = streamReader.ReadToEnd();
-                                    D.referenceFile(code[0]).set_context(text);
-                                }
+                                string text = streamReader.ReadToEnd();
+                                D.referenceFile(code[0]).set_context(text);
+                            }
 
-                            }
-                            catch
+                        }
+                        catch
+                        {
+                            Console.WriteLine("JFile not found");
+                        }
+                    }
+                    else if (code[1] == "Linst")
+                    {
+                        try
+                        {
+                            string fileName = @""+ Base.localPath + D.referenceFile(code[0]).get_file_path();
+                            using (StreamReader streamReader = File.OpenText(fileName))
                             {
-                                Console.WriteLine("JFile not found");
+                                string text = streamReader.ReadToEnd();
+                                D.referenceFile(code[0]).set_context(text);
                             }
+
+                        }
+                        catch
+                        {
+                            Console.WriteLine("JFile not found");
+                        }
+                    }
                     }
 
                     else if (code[1] == "=")
@@ -4931,13 +4987,31 @@ namespace USEC
             {
                 Value = value;
             }
+            
+        }
+        public class ArrayToken : Token
+        {
+            public byte[] Bvalue;
+            public ArrayToken(string value) : base(value) { Bvalue = stringtoByteArray(value); }
+        }
+        public static byte[] stringtoByteArray(string s)
+        {
+            List<byte> b = new List<byte>();
+            s = s.Trim();
+            s = s.Substring(1, s.Length - 2);
+            List<string> a = new List<string>(s.Split(','));
+            foreach (string i in a)
+            {
+                b.Add(byte.Parse(i));
+            }
+            return b.ToArray();
         }
 
         // Tokenizer class for breaking expressions into tokens
         public class Math_Tokenizer
         {
-            private static readonly Regex tokenPattern = new Regex(@"\d+|true|false|\+|\-|\*|\/|\%|\(|\)|&&|\|\||<=|>=|<|>|==|!=|[^\s]+");
-
+            public static readonly Regex tokenPattern = new Regex(@"\d+|true|false|\+|\-|\*|\/|\%|\(|\)|&&|\|\||<=|>=|<|>|==|!=|[^\s]+");
+            public static readonly Regex tokenPatternByte = new Regex(@"\d+|true|false|\+|\-|\-\+|\-f|\+f|\-\+f|<=|>=|<|>|==|!=|[^\s]+");
             public static List<Token> Tokenize(string expression)
             {
                 var matches = tokenPattern.Matches(expression);
@@ -4946,6 +5020,22 @@ namespace USEC
                 foreach (Match match in matches)
                 {
                     tokens.Add(new Token(match.Value));
+                }
+
+                return tokens;
+            }
+            public static List<Token> TokenizeByte(string expression)
+            {
+                var matches = tokenPatternByte.Matches(expression);
+                var tokens = new List<Token>();
+                
+                foreach (Match match in matches)
+                {
+                    Console.WriteLine(match.Value);
+                    if(match.Value.StartsWith('[') && match.Value.EndsWith(']'))
+                        tokens.Add(new ArrayToken(match.Value));           
+                    else
+                        tokens.Add(new Token(match.Value));
                 }
 
                 return tokens;
@@ -5040,7 +5130,7 @@ namespace USEC
                         return Right.Concat(reducedArrayF).ToArray();
 
                     default:
-                        throw new Exception("Unknown byte array operator");
+                        throw new Exception("Unknown byte array operator " + Operator );
                 }
             }
 
@@ -5387,24 +5477,34 @@ namespace USEC
             string equationa = "";
             for (int i = 0; i < equation.Length; i++)
             {
-                if (equation[i] == "+" || equation[i] == "-" || equation[i] == "/" || equation[i] == "*" || equation[i] == "sin" || equation[i] == "cos" || equation[i] == "tan" ||
-                                       equation[i] == "csc" || equation[i] == "sec" || equation[i] == "%" || equation[i] == "cot" || equation[i] == "root" || equation[i] == ")" || equation[i] == "(" || equation[i] == " ")
+                if (equation[i] == "+" || equation[i] == "-" || equation[i] == "==" || equation[i] == "!=" || equation[i] == "<=" || equation[i] == ">=" || equation[i] == ">" || equation[i] == "<" || equation[i] == "/" || equation[i] == "*" || equation[i] == "sin" || equation[i] == "cos" || equation[i] == "tan" ||
+                                       equation[i] == "csc" || equation[i] == "sec" || equation[i] == "%" || equation[i] == "cot" || equation[i] == "root" || equation[i] == ")" || equation[i] == "(" || equation[i] == " " || equation[i] == "-+" || equation[i] == "-f" || equation[i] == "+f" || equation[i] == "-+f")
                 {
                     equationa += equation[i] + " ";
                 }
                 else if (D.isHashable(equation[i]))
                 {
-                    equationa += ((Hashable)D.referenceVar(equation[i])).hash() + " ";
+                    byte[] by = ((Hashable)D.referenceVar(equation[i])).hash();
+                    equationa += "[";
+                    for (int dd = 0; dd < by.Length; dd++)
+                    {
+                        equationa += by[dd];
+                        if (i != by.Length - 1)
+                        {
+                            equationa += ",";
+                        }
+                    }
+                    equationa += "] ";
                 }
                 else if (Mathss.ContainsKey(equation[i]))
                 {
                     string[] equationb = Mathss[equation[i]](equation, D, Base, i, 0);
-                    equationa += equationb[0] + " ";
+                    equationa += "["+equationb[0]+"]" + " ";
                     i += int.Parse(equationb[1]);
                 }
-                else if (double.TryParse(equation[i], out double k))
+                else if (byte.TryParse(equation[i], out byte k))
                 {
-                    equationa += k + " ";
+                    equationa += "[" + k + "] ";
                 }
                 else if (D.custtypeofkey(equation[i]) != "Null")
                 {
@@ -5412,8 +5512,8 @@ namespace USEC
                 }
 
             }
+            Console.WriteLine(equationa + "\n");
             return EvaluateByteArrayOperation(equationa);
-
         }
 
         public static bool dobyteMathbool(string[] equation, Data D, base_runner Base)
@@ -5422,23 +5522,33 @@ namespace USEC
             for (int i = 0; i < equation.Length; i++)
             {
                 if (equation[i] == "+" || equation[i] == "-" || equation[i] == "==" || equation[i] == "!=" || equation[i] == "<=" || equation[i] == ">=" || equation[i] == ">" || equation[i] == "<" || equation[i] == "/" || equation[i] == "*" || equation[i] == "sin" || equation[i] == "cos" || equation[i] == "tan" ||
-                                       equation[i] == "csc" || equation[i] == "sec" || equation[i] == "%" || equation[i] == "cot" || equation[i] == "root" || equation[i] == ")" || equation[i] == "(" || equation[i] == " ")
+                                       equation[i] == "csc" || equation[i] == "sec" || equation[i] == "%" || equation[i] == "cot" || equation[i] == "root" || equation[i] == ")" || equation[i] == "(" || equation[i] == " " || equation[i] == "-+"|| equation[i] == "-f" || equation[i] == "+f" || equation[i]=="-+f")
                 {
                     equationa += equation[i] + " ";
                 }
                 else if (D.isHashable(equation[i]))
                 {
-                    equationa += ((Hashable)D.referenceVar(equation[i])).hash() + " ";
+                    byte[] by = ((Hashable)D.referenceVar(equation[i])).hash();
+                    equationa += "[";
+                    for(int dd = 0; dd<by.Length;dd++)
+                    {
+                        equationa += by[dd];
+                        if (i != by.Length - 1)
+                        {
+                            equationa += ",";
+                        }
+                    } 
+                    equationa += "] ";
                 }
                 else if (Mathss.ContainsKey(equation[i]))
                 {
                     string[] equationb = Mathss[equation[i]](equation, D, Base, i, 0);
-                    equationa += equationb[0] + " ";
+                    equationa += "[" + equationb[0] + "]" + " ";
                     i += int.Parse(equationb[1]);
                 }
-                else if (double.TryParse(equation[i], out double k))
+                else if (byte.TryParse(equation[i], out byte k))
                 {
-                    equationa += equation[i] + " ";
+                    equationa +=  "["+k+"] ";
                 }
                 else if (D.custtypeofkey(equation[i]) != "Null")
                 {
