@@ -49,6 +49,7 @@ namespace jumpE_basic
             return "JFile";
         }
         public string file_path;
+        public string file_at;
         private string file_context;
         private Data acsesed_data;
         public JFile ()
@@ -56,12 +57,13 @@ namespace jumpE_basic
             acsesed_data = new Data();
             file_path = "";
         }
-        public JFile (string file_path)
+        public JFile (string file_path, string file_at)
         {
             acsesed_data = new Data();
             this.file_path = file_path;
+            this.file_at = file_at;
         }
-    public JFile (string file_path, Data acsesed_data) : this(file_path)
+        public JFile (string file_path,string file_at, Data acsesed_data) : this(file_path,file_at)
     {
 
         this.acsesed_data = acsesed_data;
@@ -1875,7 +1877,7 @@ namespace jumpE_basic
         public string localPath = "";
         public static string currentPath = "";
         
-        public static Dictionary<string, Func<string[], Data, base_runner, int, int, string[]>> Mathss = new Dictionary<string, Func<string[], Data, base_runner, int, int, string[]>>() { { "!L!", getfromlist }, { "!M!", getfrommethod }, { "!S!", spawningspace } };
+        public static Dictionary<string, Func<string[], Data, base_runner, int, int, string[]>> Mathss = new Dictionary<string, Func<string[], Data, base_runner, int, int, string[]>>() { { "!L!", getfromlist }, { "!M!", getfrommethod }, { "!S!", spawningspace }, {"!PATH!",CurPath } };
         public base_runner(string taken, Data data, string localPath)
         {
 
@@ -3868,7 +3870,7 @@ namespace USEC
             {
                 if (code.Count() == 3)
                 {
-                    D.setFile(code[1], new JFile(Base.localPath + "\\" + code[2], D));
+                    D.setFile(code[1], new JFile(Base.localPath + "\\" , code[2], D));
                     //Console.WriteLine("File created");
                     //Console.WriteLine("File path: " + Base.localPath + "\\" + code[2]);
                 }
@@ -3876,7 +3878,7 @@ namespace USEC
                 {
                     if (D.issheet(code[3]))
                     {
-                        D.setFile(code[1], new JFile(code[2], D.referenceSheet(code[3])));
+                        D.setFile(code[1], new JFile(Base.localPath+"\\",code[2], D.referenceSheet(code[3])));
                     }
                     //else if (D.instring(code[3]))
                     //{
@@ -4183,7 +4185,7 @@ namespace USEC
 
                         try
                         {
-                            string fileName = @"" + D.referenceFile(code[0]).get_file_path();
+                            string fileName = @"" + D.referenceFile(code[0]).get_file_path() + D.referenceFile(code[0]).file_at;
                             using (StreamReader streamReader = File.OpenText(fileName))
                             {
                                 string text = streamReader.ReadToEnd();
@@ -4200,7 +4202,7 @@ namespace USEC
                     {
                         try
                         {
-                            string fileName = @""+ Base.localPath + D.referenceFile(code[0]).get_file_path();
+                            string fileName = Base.localPath + "\\"+ D.referenceFile(code[0]).file_at;
                             using (StreamReader streamReader = File.OpenText(fileName))
                             {
                                 string text = streamReader.ReadToEnd();
@@ -4920,6 +4922,10 @@ namespace USEC
 
             string[] f = { equationa, (k).ToString() };
             return f;
+        }
+        public static string[] CurPath(string[] equation, Data D, base_runner Base, int i, int k)
+        {
+            return new string[] { Base.localPath, "0" };
         }
         public static string[] getfromlist(string[] equation, Data D, base_runner Base, int i, int k)
         {
