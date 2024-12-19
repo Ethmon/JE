@@ -2980,7 +2980,10 @@ namespace jumpE_basic
                     }
                     else if (statments[iff][1] == "exist")
                     {
-                        result = D.isvar(statments[iff][2]);
+                        if (statments[iff][2] == "\"" && statments[iff][4] == "\"" && D.referenceVar(statments[iff][3]) is Valued)
+                            result = D.isvar(((Valued)D.referenceVar(statments[iff][3])).getV().ToString());
+                        else result = D.isvar(statments[iff][2]);
+
                         if (statments[iff][0] == "or" || statments[iff][0] == "nor")
                         {
                             orsD = true;
