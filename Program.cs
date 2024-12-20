@@ -1662,6 +1662,49 @@ namespace jumpE_basic
             double floatingvar = 0;
             string version = "1.0.6";
             //data.setI("LNT", 0);
+            string halfpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] == "-f")
+                {
+                    string fileName = @"" + args[i + 1];
+                    using (StreamReader streamReader = File.OpenText(fileName))
+                    {
+                        string text = streamReader.ReadToEnd();
+                        base_runner bases = new base_runner(text, data, Path.GetDirectoryName(fileName));
+                    }
+                }
+                else if (args[i] == "-v")
+                {
+                    Console.WriteLine(version);
+                }
+                else if (args[i] == "-d")
+                {
+                    if (args[i + 1] == "true")
+                    {
+                        base_runner.debg = true;
+                    }
+                    else if (args[i + 1] == "false")
+                    {
+                        base_runner.debg = false;
+                    }
+
+                }
+                else if (args[i] == "-path")
+                {
+                    halfpath = args[i + 1];
+                }
+                else if (args[i] == "-useC")
+                {
+                    string text = $@"useC {args[i+1]};end";
+                    base_runner bases = new base_runner(text, data, halfpath);
+                }
+                else if (args[i] == "-use")
+                {
+                    string text = $@"use {args[i + 1]};end";
+                    base_runner bases = new base_runner(text, data, halfpath);
+                }
+            }
             while (run)
             {
                 //data.setI("LN", 0);
