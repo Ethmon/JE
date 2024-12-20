@@ -1660,7 +1660,7 @@ namespace jumpE_basic
             bool run = true;
             bool clear_lock = false;
             double floatingvar = 0;
-            string version = "1.0.6";
+            string version = "1.1.0";
             //data.setI("LNT", 0);
             string halfpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             for (int i = 0; i < args.Length; i++)
