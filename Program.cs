@@ -1704,6 +1704,18 @@ namespace jumpE_basic
                     string text = $@"use {args[i + 1]};end";
                     base_runner bases = new base_runner(text, data, halfpath);
                 }
+                else if (args[i] == "-clear")
+                {
+                    Data datas = new Data();
+                    data = datas;
+                    Console.WriteLine("CLEAR");
+                    base_runner.hard_stop = false;
+                }
+                else if (args[i] == "-end")
+                {
+                    run = false;
+                    break;
+                }
             }
             while (run)
             {
