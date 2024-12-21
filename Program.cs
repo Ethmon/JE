@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System; // why it grey? weird...
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,23 +13,24 @@ using Microsoft.CodeAnalysis.CSharp;
 //using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CSharp;
 using System.CodeDom.Compiler;
-using System.Security.Policy;
+using System.Security.Policy; // what in the actual f is this here
 //using System.Runtime.Remoting.Messaging;
 using System.Text.RegularExpressions;
 using System.Net;
 using System.Runtime.InteropServices;
 //using jumpE_basic;
 using static System.Net.Mime.MediaTypeNames;
-using System.Net.Mail;
+using System.Net.Mail;// why did i add this agian lol
 //using static jumpE_basic.base_runner;
 using System.Runtime.CompilerServices;
 using System.CodeDom;
-using System.Diagnostics.Eventing.Reader;
+//using System.Diagnostics.Eventing.Reader
 using System.Runtime.InteropServices.JavaScript;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Collections;
-using System.Drawing;
-using System.Drawing.Printing;
+using Terminal.Gui;
+//using System.Drawing;
+//using System.Drawing.Printing;
 using static jumpE_basic.base_runner;
 
 namespace jumpE_basic
@@ -3398,7 +3399,7 @@ namespace USEC
             MetadataReference.CreateFromFile(typeof(File).Assembly.Location),                // System.IO
             MetadataReference.CreateFromFile(typeof(Regex).Assembly.Location),               // System.Text.RegularExpressions
             MetadataReference.CreateFromFile(typeof(Uri).Assembly.Location),                 // System for Uri handling
-            MetadataReference.CreateFromFile(typeof(Bitmap).Assembly.Location)
+            
             
             
             };
