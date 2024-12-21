@@ -1797,7 +1797,22 @@ namespace jumpE_basic
                 }*/
                 else if (hell == "help")
                 {
-                    Console.WriteLine("Version: " + version + "\n_-----------_ \n run \n clear \n refD \n refS \n add \n save \n clear lock \n ref \n folder \n showall\n_-----------_ ");
+                    Console.WriteLine("Version: " + version + "\n_-----------_ \n run \n clear \n debug \n save \n clear lock \n ref \n folder \n showall\n save \n showall \n help \n_-----------_ ");
+                }
+                else if(hell == "help2")
+                {
+                    Console.WriteLine(
+$@"Version: {version} 
+_-----------_
+ -f
+ -v
+ -d
+ -path
+ -useC
+ -use
+ -clear
+ -end
+_-----------_");
                 }
                 /*else if (hell == "setS")
                 {
