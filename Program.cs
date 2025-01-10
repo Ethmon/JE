@@ -32,6 +32,7 @@ using Terminal.Gui;
 //using System.Drawing;
 //using System.Drawing.Printing;
 using static jumpE_basic.base_runner;
+using NStack;
 
 namespace jumpE_basic
 {
@@ -1138,6 +1139,7 @@ namespace jumpE_basic
                 return true;
             }
             return false;
+            
         }
         public object referenceVar(string key)
         {
@@ -2075,6 +2077,7 @@ _-----------_");
                 {
                     words.Add(line);
                 }
+                
 
                 return words;
             }
@@ -3399,6 +3402,9 @@ namespace USEC
             MetadataReference.CreateFromFile(typeof(File).Assembly.Location),                // System.IO
             MetadataReference.CreateFromFile(typeof(Regex).Assembly.Location),               // System.Text.RegularExpressions
             MetadataReference.CreateFromFile(typeof(Uri).Assembly.Location),                 // System for Uri handling
+            MetadataReference.CreateFromFile(typeof(Window).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(ustring).Assembly.Location)
+
             
             
             
