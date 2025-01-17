@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 //using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CSharp;
+using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Security.Policy; // what in the actual f is this here
 //using System.Runtime.Remoting.Messaging;
@@ -23,7 +24,6 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Net.Mail;// why did i add this agian lol
 //using static jumpE_basic.base_runner;
 using System.Runtime.CompilerServices;
-using System.CodeDom;
 //using System.Diagnostics.Eventing.Reader
 using System.Runtime.InteropServices.JavaScript;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -3414,8 +3414,15 @@ namespace USEC
             references.Add(MetadataReference.CreateFromFile(typeof(List<>).Assembly.Location));
             references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()        // Load additional assemblies dynamically
             .FirstOrDefault(a => a.GetName().Name == "System.Runtime").Location));
+            
+            
+
+
             references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()
                 .FirstOrDefault(a => a.GetName().Name == "System.Collections").Location));
+            
+            references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()
+                .FirstOrDefault(a => a.GetName().Name == "netstandard").Location));
             //references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()
             //                   .FirstOrDefault(a => a.GetName().Name == "System.Collections.Generic").Location));
             references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies()
@@ -5096,8 +5103,11 @@ namespace USEC
         // Tokenizer class for breaking expressions into tokens
         public class Math_Tokenizer
         {
-            public static readonly Regex tokenPattern = new Regex(@"\d+|true|false|\+|\-|\*|\/|\%|\(|\)|&&|\|\||<=|>=|<|>|==|!=|[^\s]+");
-            public static readonly Regex tokenPatternByte = new Regex(@"\d+|true|false|\+|\-|\-\+|\-f|\+f|\-\+f|<=|>=|<|>|==|!=|[^\s]+");
+            //public static readonly Regex tokenPattern = new Regex(@"\d+|true|false|\+|\-|\*|\/|\%|\(|\)|&&|\|\||<=|>=|<|>|==|!=|[^\s]+");
+            public static readonly Regex tokenPattern = new Regex(@"\d+(\.\d+)?|true|false|\+|\-|\*|\/|\%|\(|\)|&&|\|\||<=|>=|<|>|==|!=|[^\s]+");
+            public static readonly Regex tokenPatternByte = new Regex(@"\d+(\.\d+)?|true|false|\+|\-|\-\+|\-f|\+f|\-\+f|<=|>=|<|>|==|!=|[^\s]+");
+
+
             public static List<Token> Tokenize(string expression)
             {
                 var matches = tokenPattern.Matches(expression);
@@ -5105,11 +5115,22 @@ namespace USEC
 
                 foreach (Match match in matches)
                 {
-                    tokens.Add(new Token(match.Value));
+                    string value = match.Value;
+
+                    if (value.StartsWith('-') && value.Length > 1 && char.IsDigit(value[1]))
+                    {
+                        // Treat as a negative number token
+                        tokens.Add(new Token(value));
+                    }
+                    else
+                    {
+                        tokens.Add(new Token(value));
+                    }
                 }
 
                 return tokens;
             }
+
             public static List<Token> TokenizeByte(string expression)
             {
                 var matches = tokenPatternByte.Matches(expression);
@@ -5322,10 +5343,12 @@ namespace USEC
                 double value = operand.Evaluate();
                 return op switch
                 {
+                    "-" => -value,
                     "!" => value == 0 ? 1.0 : 0.0,
                     _ => throw new Exception("Unknown operator")
                 };
             }
+
         }
 
         // Parser class for parsing expressions
@@ -5391,6 +5414,13 @@ namespace USEC
             {
                 var token = tokens.Dequeue();
 
+                if (token.Value == "-")
+                {
+                    // Check for unary negation
+                    var operand = ParsePrimaryExpression(isBoolean);
+                    return new UnaryOpNode(operand, "-");
+                }
+
                 if (double.TryParse(token.Value, out double value))
                 {
                     return new NumberNode(value);
@@ -5413,6 +5443,7 @@ namespace USEC
 
                 throw new Exception("Unexpected token");
             }
+
 
             private ByteArrayOpNode ParseByteArrayBinaryExpression()
             {
