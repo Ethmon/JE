@@ -1418,6 +1418,7 @@ namespace jumpE_basic
         }
         public object refrenceCustom(string t, string key)
         {
+            //Hello
             if (custom_types.ContainsKey(t))
             {
                 if (custom_types[t].ContainsKey(key))
