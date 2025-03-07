@@ -4345,6 +4345,15 @@ namespace USEC
                     {
                         ((list)D.referenceVar(code[0])).clear();
                     }
+                    else if (code[1] == "set")
+                    {
+                        int loc = (D.isnumvar(code[3])) ? (int)(((Number)(D.referenceVar(code[3]))).get_value()) : (int.TryParse(code[3],out int res)) ? res : -1 ;
+                        if (loc>0 && loc < ((list)D.referenceVar(code[0])).size())
+                        {
+                        ((list)D.referenceVar(code[0])).set(loc, D.referenceVar(code[2]));
+                        }
+                        else { throw new Exception("index not in bounds on line " + Base.position); }
+                    }
 
                     else if (code[1] == "add")
                     {
