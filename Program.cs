@@ -3962,6 +3962,10 @@ namespace USEC
                     //Console.WriteLine("File created");
                     //Console.WriteLine("File path: " + Base.localPath + "\\" + code[2]);
                 }
+                else if (code.Count() == 5 &&code[2] == "\""&& code[4] == "\"")
+                {
+                    D.setFile(code[1], new JFile(Base.localPath + "\\", ((Valued)(D.referenceVar(code[3]))).getV().ToString(), D));
+                }
                 else if (code.Count() == 4)
                 {
                     if (D.issheet(code[3]))
