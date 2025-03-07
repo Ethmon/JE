@@ -47,7 +47,7 @@ MIT License - See LICENSE file for details
 
 ## Contact
 Ethan
-- GitHub: TEthmon
+- GitHub: Ethmon
 - Email: Ethan6Salu@gmail.com
 
 
