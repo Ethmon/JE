@@ -465,7 +465,7 @@ namespace jumpE_basic
             {
                 throw new ArgumentException("object is not of type " + t.ToString());
             }
-            return stuff.IndexOf(obj);
+            return stuff.IndexOf(((Valued)obj).getV());
         }
         public void clear()
         {
@@ -5020,6 +5020,7 @@ namespace USEC
             string equationa = "";
             k += 2;
             if (equation[i + 2] == "size") { equationa += (((list)D.referenceVar(equation[i + 1]))).size(); k = 2; }
+            else if (equation[i + 2] == "find") { equationa += (((list)D.referenceVar(equation[i + 1]))).find(D.referenceVar(equation[i + 3])); k = 3; } // implements a finding feature to lists so you can both check if an item is in a list and where in the list it is
             else if (D.islist(equation[i + 1]) && ((list)D.referenceVar(equation[i + 1])).t == "list")
             {
                 if (equation[i + 2] == "|")
