@@ -17,6 +17,11 @@ Base Features
 ```csharp
 base_runner InstanceName = new base_runner(string code, Data bottom_data_layer, string local_path);
 ```
+### Running a File
+either use -f "FilePath" to pass it into the interpreter
+
+or type run, enter, and then type your path to the file.
+
 
 
 ### Creating a new Data sheet outside of JE code
