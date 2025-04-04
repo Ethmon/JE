@@ -4967,7 +4967,7 @@ namespace USEC
                     }
                     q++;
                 }
-                Type t = getType(code[2]);
+                Type t = D.custtypeofType(code[2]);
                 Dictionary<string, object> lists = new Dictionary<string, object>();
                 for (int i = 3; i < code.Count; i += 2)
                 {
